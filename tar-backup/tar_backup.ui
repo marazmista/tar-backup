@@ -11,11 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>tar_backup</string>
+   <string>Tar Backup Tool</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0">
+    <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="font">
        <font>
@@ -30,7 +30,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="backuptab">
        <attribute name="title">
@@ -47,7 +47,7 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>7</pointsize>
+            <italic>false</italic>
            </font>
           </property>
           <property name="title">
@@ -138,7 +138,8 @@
             <widget class="QPushButton" name="btn_addProfile">
              <property name="font">
               <font>
-               <pointsize>7</pointsize>
+               <pointsize>8</pointsize>
+               <italic>false</italic>
               </font>
              </property>
              <property name="text">
@@ -190,7 +191,7 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>120</y>
+          <y>90</y>
           <width>191</width>
           <height>27</height>
          </rect>
@@ -203,7 +204,7 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>150</y>
+          <y>120</y>
           <width>501</width>
           <height>22</height>
          </rect>
@@ -221,38 +222,26 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>210</y>
+          <y>160</y>
           <width>191</width>
           <height>41</height>
          </rect>
         </property>
-        <property name="text">
-         <string>Restore</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="cb_enc">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>70</y>
-          <width>78</width>
-          <height>21</height>
-         </rect>
-        </property>
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
          </font>
         </property>
         <property name="text">
-         <string>Decrypt</string>
+         <string>Restore</string>
         </property>
        </widget>
        <widget class="Line" name="line">
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>100</y>
+          <y>70</y>
           <width>491</width>
           <height>16</height>
          </rect>
@@ -260,41 +249,6 @@
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
-       </widget>
-       <widget class="QComboBox" name="list_enc">
-        <property name="geometry">
-         <rect>
-          <x>100</x>
-          <y>70</y>
-          <width>141</width>
-          <height>24</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>8</pointsize>
-         </font>
-        </property>
-        <item>
-         <property name="text">
-          <string>aes-256-cbc</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>rc4</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>des</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>des3</string>
-         </property>
-        </item>
        </widget>
       </widget>
       <widget class="QWidget" name="outputTab">

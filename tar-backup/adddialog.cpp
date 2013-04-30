@@ -58,7 +58,11 @@ void addDialog::on_btn_save_clicked()
         QSettings pSet(QApplication::applicationDirPath()+ "/" + ui->t_profileName->text()+".ini",
                        QSettings::IniFormat);
 
-        pSet.setValue("destination", ui->t_dest->text());
+        if (ui->t_dest->text()[ui->t_dest->text().length()-1] == '/')
+            pSet.setValue("destination", ui->t_dest->text());
+        else
+            pSet.setValue("destination", ui->t_dest->text() + "/");
+
         pSet.setValue("compression", ui->cb_compress->isChecked());
         pSet.setValue("compression_method",ui->list_comp->itemText(ui->list_comp->currentIndex()));
         pSet.setValue("encryption",ui->cb_enc->isChecked());

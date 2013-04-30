@@ -2,7 +2,7 @@
 #define TAR_BACKUP_H
 
 #include <QMainWindow>
-#include <QProcess>
+#include <QString>
 
 namespace Ui {
 class tar_backup;
@@ -18,13 +18,18 @@ public:
     void readBackupProfiles();
     void saveBackupProfiles();
     void readProfileSettings();
+    void runDecrypt(const QString &file);
+    QString figureOutFileName();
 
 private slots:
     void tarUpdateOutput();
-    void encUpdateOutput();
-    void tarRestoreUpdateOutput();
     void tarComplete();
+    void encUpdateOutput();
+    void encComplete();
+    void tarRestoreUpdateOutput();
     void tarRestoreComplete();
+    void decryptComplete();
+    void decryptUpdateOutput();
 
     void on_btn_addProfile_clicked();
 
@@ -33,7 +38,6 @@ private slots:
     void on_btn_modifyProfile_clicked();
 
     void on_btn_run_clicked();
-
 
     void on_btn_abort_clicked();
 
