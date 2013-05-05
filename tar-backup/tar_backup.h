@@ -21,6 +21,7 @@ public:
     void runDecrypt(const QString &file);
     QString figureOutFileName();
 
+    void enableButtons(bool);
 private slots:
     void tarUpdateOutput();
     void tarComplete();

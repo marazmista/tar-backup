@@ -117,6 +117,15 @@ void tar_backup::on_btn_modifyProfile_clicked()
 void tar_backup::on_btn_run_clicked()
 {
     readProfileSettings();
+
+    if (!QDir(this->dest).exists()) {
+        QMessageBox mb;
+        mb.setText("Destination directoryn not exists!");
+        mb.setIcon(QMessageBox::Critical);
+        mb.show();
+        return;
+    }
+
     if (encrypt) {
         bool ok;
         pass = QInputDialog::getText(this,"Password for encryption",
@@ -164,8 +173,7 @@ void tar_backup::on_btn_run_clicked()
         tarCmd = "tar -cpvf \"" + this->dest + fullFileName + "\" " + targets;
 
     ui->tabWidget->setCurrentIndex(2);
-    ui->btn_run->setEnabled(false);
-    ui->btn_runRestore->setEnabled(false);
+    enableButtons(false);
     tarProc->start(tarCmd,QProcess::ReadWrite);
 }
 
@@ -188,8 +196,7 @@ void tar_backup::on_btn_abort_clicked()
     tarProc->kill();
     tarRestoreProc->kill();
     ui->label_status->setText("Canceled by user.");
-    ui->btn_run->setEnabled(true);
-    ui->btn_runRestore->setEnabled(true);
+    enableButtons(true);
 }
 
 //*****************
@@ -253,8 +260,7 @@ void tar_backup::on_btn_runRestore_clicked()
     if (!fName.isEmpty() && !dest.isEmpty()) {
         ui->outputT->clear();
         ui->label_status->setText("Restoring...");
-        ui->btn_run->setEnabled(false);
-        ui->btn_runRestore->setEnabled(false);
+        enableButtons(false);
         ui->tabWidget->setCurrentIndex(2);
 
         tarRestoreProc->setReadChannelMode(QProcess::MergedChannels);
@@ -285,8 +291,7 @@ void tar_backup::tarRestoreComplete()
 {
     if (tarRestoreProc->exitStatus() == 0) {
         ui->label_status->setText("Done.");
-        ui->btn_run->setEnabled(true);
-        ui->btn_runRestore->setEnabled(true);
+        enableButtons(true);
     }
 }
 
@@ -305,8 +310,7 @@ void tar_backup::tarComplete()
             encryptProc->start(encryptCmd,QProcess::ReadWrite);
         } else {
             ui->label_status->setText("Done.");
-            ui->btn_run->setEnabled(true);
-            ui->btn_runRestore->setEnabled(true);
+            enableButtons(true);
         }
     }
 }
@@ -319,8 +323,7 @@ void tar_backup::encComplete()
         tarDel.close();
 
         ui->label_status->setText("Done.");
-        ui->btn_run->setEnabled(true);
-        ui->btn_runRestore->setEnabled(true);
+        enableButtons(true);
     }
 }
 
@@ -330,7 +333,8 @@ void tar_backup::decryptComplete()
         if (decryptOk) {
             ui->label_status->setText("Decrypt done.");
             ui->t_restoreFile->setText(decryptedFullFileName);
-            on_btn_runRestore_clicked();
+            if (!ui->cb_decryptOnly->isChecked())
+                on_btn_runRestore_clicked();
         }
     }
 }
@@ -370,3 +374,9 @@ void tar_backup::tarUpdateOutput()
 }
 
 // signals for qprcesses end //
+
+void tar_backup::enableButtons(bool val)
+{
+    ui->btn_run->setEnabled(val);
+    ui->btn_runRestore->setEnabled(val);
+}

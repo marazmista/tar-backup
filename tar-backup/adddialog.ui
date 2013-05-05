@@ -73,7 +73,7 @@
    <item row="2" column="0" colspan="3">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="sourcesTab">
       <attribute name="title">
@@ -194,6 +194,9 @@
        </item>
       </widget>
       <widget class="QComboBox" name="list_enc">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>40</x>
@@ -265,5 +268,38 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>cb_compress</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>list_comp</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>86</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>95</x>
+     <y>210</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cb_enc</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>list_enc</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>60</x>
+     <y>259</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>79</x>
+     <y>272</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
