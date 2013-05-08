@@ -20,6 +20,7 @@ public:
     void readProfileSettings();
     void runDecrypt(const QString &file);
     QString figureOutFileName();
+    QString setStatus(QString,bool);
 
     void enableButtons(bool);
 private slots:
@@ -31,6 +32,8 @@ private slots:
     void tarRestoreComplete();
     void decryptComplete();
     void decryptUpdateOutput();
+    void displayTarSize();
+    void displayEncTarSize();
 
     void on_btn_addProfile_clicked();
 

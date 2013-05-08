@@ -13,13 +13,19 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDate>
+#include <QTimer>
 
 QProcess *tarProc = new QProcess();
 QProcess *encryptProc = new QProcess();
 QProcess *decryptProc = new QProcess();
 QProcess *tarRestoreProc = new QProcess();
+
+QTimer *timer = new QTimer();
+const ushort tInterval = 1000;
+
 QString pass, fullFileName,decryptedFullFileName;
 bool canEncrypt,decryptOk;
+qint64 tarArchiveSize;
 
 tar_backup::tar_backup(QWidget *parent) :
     QMainWindow(parent),
@@ -117,6 +123,7 @@ void tar_backup::on_btn_modifyProfile_clicked()
 void tar_backup::on_btn_run_clicked()
 {
     readProfileSettings();
+    tarArchiveSize = 0;
 
     if (!QDir(this->dest).exists()) {
         QMessageBox mb;
@@ -143,10 +150,10 @@ void tar_backup::on_btn_run_clicked()
     connect(tarProc,SIGNAL(readyReadStandardOutput()),this,SLOT(tarUpdateOutput()));
     connect(tarProc,SIGNAL(finished(int,QProcess::ExitStatus)), this,SLOT(tarComplete()));
 
-    ui->label_status->setText("Working...");
+    ui->label_status->setText(setStatus("Working...",false));
     ui->outputT->clear();
+    ui->label_process->clear();
 
-    readProfileSettings();
     fullFileName = figureOutFileName();
 
     QFile profileFolderBackupList(QApplication::applicationDirPath() + "/" + this->profileName);
@@ -162,6 +169,9 @@ void tar_backup::on_btn_run_clicked()
     }
     profileFolderBackupList.close();
 
+    timer->setInterval(tInterval);
+    connect(timer,SIGNAL(timeout()),this,SLOT(displayTarSize()));
+
     if (compress) {
         if (c_method == "xz")
             tarCmd = "tar -Jcpvf \"" + this->dest + fullFileName + "\" " + targets;
@@ -174,6 +184,7 @@ void tar_backup::on_btn_run_clicked()
 
     ui->tabWidget->setCurrentIndex(2);
     enableButtons(false);
+    timer->start();
     tarProc->start(tarCmd,QProcess::ReadWrite);
 }
 
@@ -195,8 +206,9 @@ void tar_backup::on_btn_abort_clicked()
 {
     tarProc->kill();
     tarRestoreProc->kill();
-    ui->label_status->setText("Canceled by user.");
+    ui->label_status->setText(setStatus("Canceled by user.",true));
     enableButtons(true);
+    ui->label_process->clear();
 }
 
 //*****************
@@ -240,7 +252,7 @@ void tar_backup::runDecrypt(const QString &file)
         decryptCmd = "openssl " + d_method + " -d -pass pass:" + pass + " -in \"" + file +
                 "\" -out \"" + decryptedFullFileName +"\"";
 
-        ui->label_status->setText("Decrypting...");
+        ui->label_status->setText(setStatus("Decrypting...",false));
 
         decryptProc->setReadChannelMode(QProcess::MergedChannels);
         connect(decryptProc,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(decryptComplete()));
@@ -259,7 +271,7 @@ void tar_backup::on_btn_runRestore_clicked()
 
     if (!fName.isEmpty() && !dest.isEmpty()) {
         ui->outputT->clear();
-        ui->label_status->setText("Restoring...");
+        ui->label_status->setText(setStatus("Restoring...",false));
         enableButtons(false);
         ui->tabWidget->setCurrentIndex(2);
 
@@ -299,17 +311,22 @@ void tar_backup::tarComplete()
 {
     if (tarProc->exitStatus() == 0) {
         if (canEncrypt) {
-            ui->label_status->setText("Encrypting...");
+            timer->stop();
+            tarArchiveSize = QFileInfo(this->dest + fullFileName).size();
+
+            ui->label_status->setText(setStatus("Encrypting...",false));
             connect(encryptProc,SIGNAL(readyReadStandardOutput()),this, SLOT(encUpdateOutput()));
             connect(encryptProc,SIGNAL(finished(int,QProcess::ExitStatus)),this, SLOT(encComplete()));
+            connect(timer,SIGNAL(timeout()),this,SLOT(displayEncTarSize()));
 
             QString encryptCmd = "openssl "+ e_method + " -salt -pass pass:" + pass +
                     " -in \"" + this->dest + fullFileName + "\"" +
                     " -out \"" + this->dest + fullFileName + ".enc_"+ this->e_method;
 
+            timer->start();
             encryptProc->start(encryptCmd,QProcess::ReadWrite);
         } else {
-            ui->label_status->setText("Done.");
+            ui->label_status->setText(setStatus("Done.",true));
             enableButtons(true);
         }
     }
@@ -322,8 +339,10 @@ void tar_backup::encComplete()
         tarDel.remove();
         tarDel.close();
 
-        ui->label_status->setText("Done.");
+        ui->label_status->setText(setStatus("Encryption done.",true));
         enableButtons(true);
+        timer->stop();
+        ui->label_process->clear();
     }
 }
 
@@ -331,7 +350,7 @@ void tar_backup::decryptComplete()
 {
     if (decryptProc->exitStatus() == 0) {
         if (decryptOk) {
-            ui->label_status->setText("Decrypt done.");
+            ui->label_status->setText(setStatus("Decrypt done.",true));
             ui->t_restoreFile->setText(decryptedFullFileName);
             if (!ui->cb_decryptOnly->isChecked())
                 on_btn_runRestore_clicked();
@@ -360,7 +379,7 @@ void tar_backup::decryptUpdateOutput()
     if (!s.isEmpty()) {
         ui->outputT->appendPlainText(s);
         if (s.contains("bad decrypt")) {
-            ui->label_status->setText("Decrypt filed. (bad password?)");
+            ui->label_status->setText(setStatus("Decrypt filed. (bad password?)",true));
             decryptOk = false;
         }
     }
@@ -379,4 +398,25 @@ void tar_backup::enableButtons(bool val)
 {
     ui->btn_run->setEnabled(val);
     ui->btn_runRestore->setEnabled(val);
+}
+
+void tar_backup::displayTarSize()
+{
+    QFileInfo fi(this->dest + fullFileName);
+    ui->label_process->setText("Processed so far: " + QString::number(fi.size() / 1000 / 1000) + " MB");
+}
+
+void tar_backup::displayEncTarSize()
+{
+    QFileInfo fi(this->dest + fullFileName + ".enc_"+ this->e_method);
+    ui->label_process->setText("Processed so far: " + QString::number(fi.size() / 1000 / 1000) +
+                               " MB / " + QString::number(tarArchiveSize / 1000 / 1000) + " MB");
+}
+
+QString tar_backup::setStatus(QString status, bool finishStatus)
+{
+    if (finishStatus)
+        return QDateTime().currentDateTime().toString("hh:mm:ss") + "  |  " + status;
+    else
+        return "Started at: " + QDateTime().currentDateTime().toString("hh:mm:ss") + " | " + status;
 }
