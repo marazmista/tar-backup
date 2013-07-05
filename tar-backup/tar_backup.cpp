@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QDate>
 #include <QTimer>
+#include <QStyle>
 
 QProcess *tarProc = new QProcess();
 QProcess *encryptProc = new QProcess();
@@ -25,7 +26,7 @@ const ushort tInterval = 1000;
 
 QString pass, fullFileName,decryptedFullFileName;
 bool canEncrypt,decryptOk;
-qint64 tarArchiveSize;
+qint64 tarArchiveSize,fiSizeNow,fiSizeOld;
 
 tar_backup::tar_backup(QWidget *parent) :
     QMainWindow(parent),
@@ -33,6 +34,16 @@ tar_backup::tar_backup(QWidget *parent) :
 {
     ui->setupUi(this);
     readBackupProfiles();
+
+    // setting up icons //
+    ui->btn_run->setIcon(QIcon::fromTheme("system-run"));
+    ui->btn_addProfile->setIcon(QIcon::fromTheme("list-add"));
+//    ui->btn_modifyProfile->setIcon(QIcon::fromTheme());
+    ui->btn_removeProfile->setIcon(QIcon::fromTheme("list-remove"));
+    ui->btn_selectFileRestore->setIcon(QIcon::fromTheme("folder"));
+    ui->btn_setDestRestore->setIcon(QIcon::fromTheme("folder"));
+    ui->btn_abort->setIcon(QIcon::fromTheme("process-stop"));
+    ui->btn_runRestore->setIcon(QIcon::fromTheme("system-run"));
 }
 
 tar_backup::~tar_backup()
@@ -98,21 +109,32 @@ void tar_backup::on_btn_addProfile_clicked()
 
 void tar_backup::on_btn_removeProfile_clicked()
 {
-    QFile f(QApplication::applicationDirPath() + "/" +
-            ui->list_backupProfiles->currentItem()->text());
-    f.remove();
-    f.close();
-    QFile fini(QApplication::applicationDirPath() + "/" +
-               ui->list_backupProfiles->currentItem()->text()+".ini");
-    fini.remove();
-    fini.close();
+    if (!ui->list_backupProfiles->currentItem() != 0) //check if something is selected
+        return;
 
-    delete ui->list_backupProfiles->currentItem();
-    saveBackupProfiles();
+    if (QMessageBox::Yes == QMessageBox::question(this,
+                              "Queston",
+                              "Remove profile " + ui->list_backupProfiles->currentItem()->text() + "?",
+                              QMessageBox::Yes,QMessageBox::No)) {
+        QFile f(QApplication::applicationDirPath() + "/" +
+                ui->list_backupProfiles->currentItem()->text());
+        f.remove();
+        f.close();
+        QFile fini(QApplication::applicationDirPath() + "/" +
+                   ui->list_backupProfiles->currentItem()->text()+".ini");
+        fini.remove();
+        fini.close();
+
+        delete ui->list_backupProfiles->currentItem();
+        saveBackupProfiles();
+    }
 }
 
 void tar_backup::on_btn_modifyProfile_clicked()
 {
+    if (!ui->list_backupProfiles->currentItem() != 0) //check if something is selected
+        return;
+
     readProfileSettings();
     addDialog a(profileName,dest,compress,c_method,encrypt,e_method);
     a.exec();
@@ -122,14 +144,15 @@ void tar_backup::on_btn_modifyProfile_clicked()
 
 void tar_backup::on_btn_run_clicked()
 {
+    if (!ui->list_backupProfiles->currentItem() != 0) //check if something is selected
+        return;
+
     readProfileSettings();
     tarArchiveSize = 0;
+    fiSizeNow = fiSizeOld = 0;
 
     if (!QDir(this->dest).exists()) {
-        QMessageBox mb;
-        mb.setText("Destination directoryn not exists!");
-        mb.setIcon(QMessageBox::Critical);
-        mb.show();
+        QMessageBox::critical(this,"Error", "Destination directory not exists!",QMessageBox::Ok);
         return;
     }
 
@@ -206,6 +229,7 @@ void tar_backup::on_btn_abort_clicked()
 {
     tarProc->kill();
     tarRestoreProc->kill();
+    encryptProc->kill();
     ui->label_status->setText(setStatus("Canceled by user.",true));
     enableButtons(true);
     ui->label_process->clear();
@@ -267,31 +291,34 @@ void tar_backup::on_btn_runRestore_clicked()
 {
     QString fName = ui->t_restoreFile->text();
     QString dest = ui->t_destRestore->text();
-    decryptOk = true;
 
-    if (!fName.isEmpty() && !dest.isEmpty()) {
-        ui->outputT->clear();
-        ui->label_status->setText(setStatus("Restoring...",false));
-        enableButtons(false);
-        ui->tabWidget->setCurrentIndex(2);
-
-        tarRestoreProc->setReadChannelMode(QProcess::MergedChannels);
-        connect(tarRestoreProc,SIGNAL(readyReadStandardOutput()),this,SLOT(tarRestoreUpdateOutput()));
-        connect(tarRestoreProc,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(tarRestoreComplete()));
-
-        if (fName.contains(".enc_")) {
-            runDecrypt(fName);
-        } else {
-            QString restoreCmd = "tar -xvpf " + fName + " -C "+ dest;
-            tarRestoreProc->start(restoreCmd,QProcess::ReadWrite);
-        }
-    } else {
-        QMessageBox mb;
-        mb.setText("File or restore destination not set!");
-        mb.setIcon(QMessageBox::Critical);
-        mb.exec();
+    // check valid data to restore //
+    if (fName.isEmpty()) {
+        QMessageBox::critical(this,"Error", "Source archive not set!",QMessageBox::Ok);
+        return;
+    }
+    if (dest.isEmpty()) {
+        QMessageBox::critical(this,"Error", "Destination archive not set!",QMessageBox::Ok);
+        return;
     }
 
+    decryptOk = true;
+
+    ui->outputT->clear();
+    ui->label_status->setText(setStatus("Restoring...",false));
+    enableButtons(false);
+    ui->tabWidget->setCurrentIndex(2);
+
+    tarRestoreProc->setReadChannelMode(QProcess::MergedChannels);
+    connect(tarRestoreProc,SIGNAL(readyReadStandardOutput()),this,SLOT(tarRestoreUpdateOutput()));
+    connect(tarRestoreProc,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(tarRestoreComplete()));
+
+    if (fName.contains(".enc_")) {
+        runDecrypt(fName);
+    } else {
+        QString restoreCmd = "tar -xvpf " + fName + " -C "+ dest;
+        tarRestoreProc->start(restoreCmd,QProcess::ReadWrite);
+    }
 }
 // restore tab end //
 
@@ -403,7 +430,16 @@ void tar_backup::enableButtons(bool val)
 void tar_backup::displayTarSize()
 {
     QFileInfo fi(this->dest + fullFileName);
-    ui->label_process->setText("Processed so far: " + QString::number(fi.size() / 1000 / 1000) + " MB");
+    fiSizeNow = fi.size() / 1000;
+
+    QString speed;
+    if ((fiSizeNow - fiSizeOld) > 2000)
+        speed = QString::number((fiSizeNow - fiSizeOld)/1000) + " MB/s";
+    else
+        speed = QString::number(fiSizeNow - fiSizeOld) + " kB/s";
+
+    ui->label_process->setText("Archive size: " + QString::number(fiSizeNow / 1000) + " MB ( " + speed + " )");
+    fiSizeOld = fi.size() / 1000;
 }
 
 void tar_backup::displayEncTarSize()

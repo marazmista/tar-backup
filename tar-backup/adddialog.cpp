@@ -54,41 +54,42 @@ addDialog::~addDialog()
 
 void addDialog::on_btn_save_clicked()
 {
-    if (!ui->t_profileName->text().isEmpty() && !ui->t_dest->text().isEmpty()) {
-        QSettings pSet(QApplication::applicationDirPath()+ "/" + ui->t_profileName->text()+".ini",
-                       QSettings::IniFormat);
-
-        if (ui->t_dest->text()[ui->t_dest->text().length()-1] == '/')
-            pSet.setValue("destination", ui->t_dest->text());
-        else
-            pSet.setValue("destination", ui->t_dest->text() + "/");
-
-        pSet.setValue("compression", ui->cb_compress->isChecked());
-        pSet.setValue("compression_method",ui->list_comp->itemText(ui->list_comp->currentIndex()));
-        pSet.setValue("encryption",ui->cb_enc->isChecked());
-        pSet.setValue("encryption_method",ui->list_enc->itemText(ui->list_enc->currentIndex()));
-
-        QFile pFileList(QApplication::applicationDirPath() + "/" + ui->t_profileName->text());
-        pFileList.open(QIODevice::WriteOnly);
-
-        QByteArray tmpArr;
-        for (int i=0;i < ui->list_Files->count(); i++ ) {
-            tmpArr.append(QString(ui->list_Files->item(i)->text()));
-            if (i != ui->list_Files->count() - 1)
-                tmpArr.append('\n');
-        }
-        pFileList.write(tmpArr);
-        pFileList.close();
-
-        this->backupProfileName = ui->t_profileName->text();
-        this->close();
-    } else {
-        QMessageBox mb;
-        mb.setText("Profile name or destination not set!");
-        mb.setIcon(QMessageBox::Critical);
-        mb.exec();
+    if (ui->t_profileName->text().isEmpty()) {
+        QMessageBox::critical(this,"Error","Profile name not set!",QMessageBox::Ok);
+        return;
+    }
+    if (ui->t_dest->text().isEmpty()) {
+        QMessageBox::critical(this,"Error","Destination not set!",QMessageBox::Ok);
+        return;
     }
 
+    QSettings pSet(QApplication::applicationDirPath()+ "/" + ui->t_profileName->text()+".ini",
+                   QSettings::IniFormat);
+
+    if (ui->t_dest->text()[ui->t_dest->text().length()-1] == '/')
+        pSet.setValue("destination", ui->t_dest->text());
+    else
+        pSet.setValue("destination", ui->t_dest->text() + "/");
+
+    pSet.setValue("compression", ui->cb_compress->isChecked());
+    pSet.setValue("compression_method",ui->list_comp->itemText(ui->list_comp->currentIndex()));
+    pSet.setValue("encryption",ui->cb_enc->isChecked());
+    pSet.setValue("encryption_method",ui->list_enc->itemText(ui->list_enc->currentIndex()));
+
+    QFile pFileList(QApplication::applicationDirPath() + "/" + ui->t_profileName->text());
+    pFileList.open(QIODevice::WriteOnly);
+
+    QByteArray tmpArr;
+    for (int i=0;i < ui->list_Files->count(); i++ ) {
+        tmpArr.append(QString(ui->list_Files->item(i)->text()));
+        if (i != ui->list_Files->count() - 1)
+            tmpArr.append('\n');
+    }
+    pFileList.write(tmpArr);
+    pFileList.close();
+
+    this->backupProfileName = ui->t_profileName->text();
+    this->close();
 }
 
 void addDialog::on_btn_addFolders_clicked()
