@@ -32,8 +32,11 @@ private slots:
 
     void on_bst_setDest_clicked();
 
+    void on_btn_setDest_clicked();
+
 private:
     Ui::addDialog *ui;
+    void loadUiIcons();
 };
 
 #endif // ADDDIALOG_H

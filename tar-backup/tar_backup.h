@@ -15,14 +15,7 @@ class tar_backup : public QMainWindow
 public:
     explicit tar_backup(QWidget *parent = 0);
     ~tar_backup();
-    void readBackupProfiles();
-    void saveBackupProfiles();
-    void readProfileSettings();
-    void runDecrypt(const QString &file);
-    QString figureOutFileName();
-    QString setStatus(QString,bool);
 
-    void enableButtons(bool);
 private slots:
     void tarUpdateOutput();
     void tarComplete();
@@ -57,6 +50,15 @@ private:
     bool compress,encrypt, decryptOk,canEncrypt;
     qint64 tarArchiveSize,fiSizeNow,fiSizeOld;
     static const ushort tInterval = 1000;
+
+    void loadUiIcons();
+    void readBackupProfiles();
+    void saveBackupProfiles();
+    void readProfileSettings();
+    void runDecrypt(const QString &file);
+    QString figureOutFileName();
+    QString setStatus(QString,bool);
+    void enableButtons(bool);
 };
 
 #endif // TAR_BACKUP_H

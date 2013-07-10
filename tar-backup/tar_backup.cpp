@@ -14,8 +14,15 @@ tar_backup::tar_backup(QWidget *parent) :
 {
     ui->setupUi(this);
     readBackupProfiles();
+    loadUiIcons();
+}
 
-    // setting up icons //
+tar_backup::~tar_backup()
+{
+    delete ui;
+}
+
+void tar_backup::loadUiIcons() {
     ui->btn_run->setIcon(QIcon::fromTheme("system-run"));
     ui->btn_addProfile->setIcon(QIcon::fromTheme("list-add"));
 //    ui->btn_modifyProfile->setIcon(QIcon::fromTheme());
@@ -26,10 +33,6 @@ tar_backup::tar_backup(QWidget *parent) :
     ui->btn_runRestore->setIcon(QIcon::fromTheme("system-run"));
 }
 
-tar_backup::~tar_backup()
-{
-    delete ui;
-}
 
 //*****************
 // manage profiles //

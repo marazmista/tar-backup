@@ -16,6 +16,8 @@ addDialog::addDialog(QWidget *parent) :
     ui(new Ui::addDialog)
 {
     ui->setupUi(this);
+
+    loadUiIcons();
 }
 
 addDialog::addDialog(QString &profileName, QString &dest, bool &compression, QString &c_method,
@@ -24,6 +26,7 @@ addDialog::addDialog(QString &profileName, QString &dest, bool &compression, QSt
     ui(new Ui::addDialog)
 {
     ui->setupUi(this);
+    loadUiIcons();
 
     ui->t_dest->setText(dest);
     ui->cb_compress->setChecked(compression);
@@ -50,6 +53,14 @@ addDialog::addDialog(QString &profileName, QString &dest, bool &compression, QSt
 addDialog::~addDialog()
 {
     delete ui;
+}
+
+void addDialog::loadUiIcons() {
+    ui->btn_addFolders->setIcon(QIcon::fromTheme("folder"));
+    ui->btn_setDest->setIcon(QIcon::fromTheme("folder"));
+    ui->btn_remove->setIcon(QIcon::fromTheme("list-remove"));
+    ui->btn_save->setIcon(QIcon::fromTheme("document-save"));
+    ui->btn_cancel->setIcon(QIcon::fromTheme("window-close"));
 }
 
 void addDialog::on_btn_save_clicked()
@@ -123,7 +134,7 @@ void addDialog::on_btn_remove_clicked()
     delete ui->list_Files->currentItem();
 }
 
-void addDialog::on_bst_setDest_clicked()
+void addDialog::on_btn_setDest_clicked()
 {
     ui->t_dest->setText(QFileDialog::getExistingDirectory(this,
                                                                "Select files",
