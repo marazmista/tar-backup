@@ -14,7 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         tar_backup.cpp \
-    adddialog.cpp
+    adddialog.cpp \
+    restoreTab.cpp \
+    backupTab.cpp \
+    procSignals.cpp \
+    outputTab.cpp
 
 HEADERS  += tar_backup.h \
     adddialog.h

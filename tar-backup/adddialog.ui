@@ -184,6 +184,11 @@
        </item>
        <item>
         <property name="text">
+         <string>lzma</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>bzip2</string>
         </property>
        </item>
