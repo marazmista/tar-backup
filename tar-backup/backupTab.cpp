@@ -116,7 +116,7 @@ void tar_backup::on_btn_run_clicked()
     connect(timer,SIGNAL(timeout()),this,SLOT(displayTarSize()));
 
     if (compress)
-        tarCmd = "tar -cpvf --"+ c_method + " \"" + this->dest + fullFileName + "\" " + targets;
+        tarCmd = "tar --" + c_method + " -cpvf \"" + this->dest + fullFileName + "\" " + targets;
     else
         tarCmd = "tar -cpvf \"" + this->dest + fullFileName + "\" " + targets;
 
