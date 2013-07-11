@@ -25,6 +25,7 @@ private slots:
     void tarRestoreComplete();
     void decryptComplete();
     void decryptUpdateOutput();
+    void tarListProcUpdateOutput();
     void displayTarSize();
     void displayEncTarSize();
 
@@ -44,9 +45,13 @@ private slots:
 
     void on_btn_runRestore_clicked();
 
+    void on_btn_listMembers_clicked();
+
+    void on_btn_saveMembersToFile_clicked();
+
 private:
     Ui::tar_backup *ui;
-    QString c_method,e_method,dest,profileName,pass, fullFileName,decryptedFullFileName;
+    QString c_method,e_method,dest,profileName, tarExtraParam,pass, fullFileName,decryptedFullFileName;
     bool compress,encrypt, decryptOk,canEncrypt;
     qint64 tarArchiveSize,fiSizeNow,fiSizeOld;
     static const ushort tInterval = 1000;
@@ -59,6 +64,7 @@ private:
     QString figureOutFileName();
     QString setStatus(QString,bool);
     void enableButtons(bool);
+    void setupProcSignals();
 };
 
 #endif // TAR_BACKUP_H

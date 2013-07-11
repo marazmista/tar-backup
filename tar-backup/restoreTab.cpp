@@ -11,6 +11,7 @@
 
 QProcess *decryptProc = new QProcess();
 QProcess *tarRestoreProc = new QProcess();
+QProcess *tarListProc = new QProcess();
 
 void tar_backup::on_btn_selectFileRestore_clicked()
 {
@@ -53,9 +54,6 @@ void tar_backup::runDecrypt(const QString &file)
         ui->label_status->setText(setStatus("Decrypting...",false));
 
         decryptProc->setReadChannelMode(QProcess::MergedChannels);
-        connect(decryptProc,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(decryptComplete()));
-        connect(decryptProc,SIGNAL(readyReadStandardOutput()),this,SLOT(decryptUpdateOutput()));
-
         decryptProc->start(decryptCmd,QProcess::ReadWrite);
     } else
         return;
@@ -71,6 +69,10 @@ void tar_backup::on_btn_runRestore_clicked()
         QMessageBox::critical(this,"Error", "Source archive not set!",QMessageBox::Ok);
         return;
     }
+    if (QFile::exists(fName) == false) {
+        QMessageBox::critical(this,"Error", "Archive file not exists!",QMessageBox::Ok);
+        return;
+    }
     if (dest.isEmpty()) {
         QMessageBox::critical(this,"Error", "Destination archive not set!",QMessageBox::Ok);
         return;
@@ -84,13 +86,46 @@ void tar_backup::on_btn_runRestore_clicked()
     ui->tabWidget->setCurrentIndex(2);
 
     tarRestoreProc->setReadChannelMode(QProcess::MergedChannels);
-    connect(tarRestoreProc,SIGNAL(readyReadStandardOutput()),this,SLOT(tarRestoreUpdateOutput()));
-    connect(tarRestoreProc,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(tarRestoreComplete()));
 
     if (fName.contains(".enc_")) {
         runDecrypt(fName);
     } else {
-        QString restoreCmd = "tar -xvpf " + fName + " -C "+ dest;
+        QString restoreCmd = "tar --extract -v -p --file " + fName + " -C "+ dest;
         tarRestoreProc->start(restoreCmd,QProcess::ReadWrite);
     }
 }
+
+
+// list members tab //
+
+void tar_backup::on_btn_listMembers_clicked()
+{
+    QString fName = ui->t_restoreFile->text();
+
+    if (fName.isEmpty()) {
+        QMessageBox::critical(this,"Error", "Source archive not set!",QMessageBox::Ok);
+        return;
+    }
+
+    QString verbose;
+    if (ui->cb_listExtendedInfo->isChecked())
+        verbose = " -v ";
+    else
+        verbose = "";
+
+    QString cmd = "tar --list " + verbose + " --file " + fName + "\"";
+    ui->tarMembersT->clear();
+
+    tarListProc->setProcessChannelMode(QProcess::MergedChannels);
+    tarListProc->start(cmd,QIODevice::ReadOnly);
+}
+
+
+void tar_backup::on_btn_saveMembersToFile_clicked()
+{
+    QFile f(QFileDialog::getSaveFileName(this,"Save file...","",".txt"));
+    f.open(QIODevice::WriteOnly);
+    f.write(ui->tarMembersT->toPlainText().toLatin1());
+    f.close();
+}
+

@@ -25,3 +25,6 @@ HEADERS  += tar_backup.h \
 
 FORMS    += tar_backup.ui \
     adddialog.ui
+
+RESOURCES += \
+    tarManpage.qrc

@@ -7,6 +7,7 @@
 
 #include <QSettings>
 #include <QTextStream>
+#include <QFileDialog>
 
 tar_backup::tar_backup(QWidget *parent) :
     QMainWindow(parent),
@@ -15,6 +16,7 @@ tar_backup::tar_backup(QWidget *parent) :
     ui->setupUi(this);
     readBackupProfiles();
     loadUiIcons();
+    setupProcSignals();
 }
 
 tar_backup::~tar_backup()
@@ -31,6 +33,8 @@ void tar_backup::loadUiIcons() {
     ui->btn_setDestRestore->setIcon(QIcon::fromTheme("folder"));
     ui->btn_abort->setIcon(QIcon::fromTheme("process-stop"));
     ui->btn_runRestore->setIcon(QIcon::fromTheme("system-run"));
+    ui->btn_listMembers->setIcon(QIcon::fromTheme("system-run"));
+    ui->btn_saveMembersToFile->setIcon(QIcon::fromTheme("document-save"));
 }
 
 
@@ -47,6 +51,7 @@ void tar_backup::readProfileSettings()
     this->encrypt = pSet.value("encryption",false).toBool();
     this->c_method = pSet.value("compression_method","xz").toString();
     this->e_method = pSet.value("encryption_method","aes-256-cbc").toString();
+    this->tarExtraParam = pSet.value("tarExtraParam","").toString();
 }
 
 void tar_backup::readBackupProfiles()

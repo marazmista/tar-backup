@@ -10,23 +10,26 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTextStream>
+#include <QDesktopServices>
+#include <QUrl>
 
 addDialog::addDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::addDialog)
 {
     ui->setupUi(this);
-
     loadUiIcons();
+    setupSignals();
 }
 
 addDialog::addDialog(QString &profileName, QString &dest, bool &compression, QString &c_method,
-                     bool &encryption, QString &e_method, QWidget *parent) :
+                     bool &encryption, QString &e_method, QString &tarExtraParam, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::addDialog)
 {
     ui->setupUi(this);
     loadUiIcons();
+    setupSignals();
 
     ui->t_dest->setText(dest);
     ui->cb_compress->setChecked(compression);
@@ -34,6 +37,7 @@ addDialog::addDialog(QString &profileName, QString &dest, bool &compression, QSt
     ui->cb_enc->setChecked(encryption);
     ui->list_enc->setCurrentText(e_method);
     ui->t_profileName->setText(profileName);
+    ui->t_tarExtraParam->setText(tarExtraParam);
 
     QFile fList(QApplication::applicationDirPath() + "/" + profileName);
     fList.open(QIODevice::ReadOnly);
@@ -53,6 +57,12 @@ addDialog::addDialog(QString &profileName, QString &dest, bool &compression, QSt
 addDialog::~addDialog()
 {
     delete ui;
+}
+
+void addDialog::setupSignals()
+{
+    connect(ui->cb_compress,SIGNAL(clicked(bool)),ui->list_comp,SLOT(setEnabled(bool)));
+    connect(ui->cb_enc,SIGNAL(clicked(bool)),ui->list_enc,SLOT(setEnabled(bool)));
 }
 
 void addDialog::loadUiIcons() {
@@ -86,6 +96,7 @@ void addDialog::on_btn_save_clicked()
     pSet.setValue("compression_method",ui->list_comp->itemText(ui->list_comp->currentIndex()));
     pSet.setValue("encryption",ui->cb_enc->isChecked());
     pSet.setValue("encryption_method",ui->list_enc->itemText(ui->list_enc->currentIndex()));
+    pSet.setValue("tarExtraParam",ui->t_tarExtraParam->text());
 
     QFile pFileList(QApplication::applicationDirPath() + "/" + ui->t_profileName->text());
     pFileList.open(QIODevice::WriteOnly);
@@ -100,7 +111,7 @@ void addDialog::on_btn_save_clicked()
     pFileList.close();
 
     this->backupProfileName = ui->t_profileName->text();
-    this->close();
+    this->done(1);
 }
 
 void addDialog::on_btn_addFolders_clicked()
@@ -126,7 +137,7 @@ void addDialog::on_btn_addFiles_clicked()
 
 void addDialog::on_btn_cancel_clicked()
 {
-    this->close();
+    this->done(0);
 }
 
 void addDialog::on_btn_remove_clicked()
@@ -140,4 +151,10 @@ void addDialog::on_btn_setDest_clicked()
                                                                "Select files",
                                                                "",
                                                                QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks));
+}
+
+void addDialog::on_btn_tarManpage_clicked()
+{
+    QFile::copy(":/tarManPage/tar.1.txt",QApplication::applicationDirPath() + "/tarManpage.txt");
+    QDesktopServices::openUrl(QUrl(QApplication::applicationDirPath() + "/tarManpage.txt"));
 }

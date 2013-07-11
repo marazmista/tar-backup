@@ -12,8 +12,33 @@ extern QProcess *tarProc;
 extern QProcess *encryptProc;
 extern QProcess *tarRestoreProc;
 extern QProcess *decryptProc;
+extern QProcess *tarListProc;
 
 extern QTimer *timer;
+
+void tar_backup::setupProcSignals() {
+    // encrypt process //
+    connect(encryptProc,SIGNAL(readyReadStandardOutput()),this, SLOT(encUpdateOutput()));
+    connect(encryptProc,SIGNAL(finished(int,QProcess::ExitStatus)),this, SLOT(encComplete()));
+    // timer to display ecryption progress //
+    connect(timer,SIGNAL(timeout()),this,SLOT(displayEncTarSize()));
+
+    // main tar backup process //
+    connect(tarProc,SIGNAL(readyReadStandardOutput()),this,SLOT(tarUpdateOutput()));
+    connect(tarProc,SIGNAL(finished(int,QProcess::ExitStatus)), this,SLOT(tarComplete()));
+    // timer to display archive size in status //
+    connect(timer,SIGNAL(timeout()),this,SLOT(displayTarSize()));
+
+    // decrypt process //
+    connect(decryptProc,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(decryptComplete()));
+    connect(decryptProc,SIGNAL(readyReadStandardOutput()),this,SLOT(decryptUpdateOutput()));
+
+    // restore process //
+    connect(tarRestoreProc,SIGNAL(readyReadStandardOutput()),this,SLOT(tarRestoreUpdateOutput()));
+    connect(tarRestoreProc,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(tarRestoreComplete()));
+
+    connect(tarListProc,SIGNAL(readyReadStandardOutput()),this,SLOT(tarListProcUpdateOutput()));
+}
 
 void tar_backup::tarRestoreComplete()
 {
@@ -31,10 +56,6 @@ void tar_backup::tarComplete()
             tarArchiveSize = QFileInfo(this->dest + fullFileName).size();
 
             ui->label_status->setText(setStatus("Encrypting...",false));
-            connect(encryptProc,SIGNAL(readyReadStandardOutput()),this, SLOT(encUpdateOutput()));
-            connect(encryptProc,SIGNAL(finished(int,QProcess::ExitStatus)),this, SLOT(encComplete()));
-            connect(timer,SIGNAL(timeout()),this,SLOT(displayEncTarSize()));
-
             QString encryptCmd = "openssl "+ e_method + " -salt -pass pass:" + pass +
                     " -in \"" + this->dest + fullFileName + "\"" +
                     " -out \"" + this->dest + fullFileName + ".enc_"+ this->e_method;
@@ -106,4 +127,10 @@ void tar_backup::tarUpdateOutput()
     QString s = tarProc->readAllStandardOutput();
     if (!s.isEmpty())
         ui->outputT->appendPlainText(s);
+}
+
+void tar_backup::tarListProcUpdateOutput() {
+    QString s = tarListProc->readAllStandardOutput();
+    if (!s.isEmpty())
+        ui->tarMembersT->appendPlainText(s);
 }

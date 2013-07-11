@@ -23,8 +23,10 @@ void tar_backup::on_btn_addProfile_clicked()
     addDialog a;
     a.exec();
 
-    ui->list_backupProfiles->addItem(a.backupProfileName);
-    saveBackupProfiles();
+    if (a.result() == 1) {
+        ui->list_backupProfiles->addItem(a.backupProfileName);
+        saveBackupProfiles();
+    }
 }
 
 void tar_backup::on_btn_removeProfile_clicked()
@@ -56,7 +58,7 @@ void tar_backup::on_btn_modifyProfile_clicked()
         return;
 
     readProfileSettings();
-    addDialog a(profileName,dest,compress,c_method,encrypt,e_method);
+    addDialog a(profileName,dest,compress,c_method,encrypt,e_method,tarExtraParam);
     a.exec();
 }
 
@@ -90,8 +92,6 @@ void tar_backup::on_btn_run_clicked()
     }
 
     tarProc->setProcessChannelMode(QProcess::MergedChannels);
-    connect(tarProc,SIGNAL(readyReadStandardOutput()),this,SLOT(tarUpdateOutput()));
-    connect(tarProc,SIGNAL(finished(int,QProcess::ExitStatus)), this,SLOT(tarComplete()));
 
     ui->label_status->setText(setStatus("Working...",false));
     ui->outputT->clear();
@@ -113,12 +113,11 @@ void tar_backup::on_btn_run_clicked()
     profileFolderBackupList.close();
 
     timer->setInterval(tInterval);
-    connect(timer,SIGNAL(timeout()),this,SLOT(displayTarSize()));
 
     if (compress)
-        tarCmd = "tar --" + c_method + " -cpvf \"" + this->dest + fullFileName + "\" " + targets;
+        tarCmd = "tar --create --" + c_method + " -p -v "+ this->tarExtraParam +" --file \"" + this->dest + fullFileName + "\" " + targets;
     else
-        tarCmd = "tar -cpvf \"" + this->dest + fullFileName + "\" " + targets;
+        tarCmd = "tar --create -p -v --file \"" + this->dest + fullFileName + "\" " + targets;
 
     ui->tabWidget->setCurrentIndex(2);
     enableButtons(false);
