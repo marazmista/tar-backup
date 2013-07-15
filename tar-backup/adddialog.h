@@ -15,12 +15,14 @@ class addDialog : public QDialog
 public:
     explicit addDialog(QWidget *parent = 0);
     explicit addDialog(QString &profileName,QString &dest,bool &compression, QString &c_method,
-                       bool &encryption, QString &e_method, QString &tarExtraParam, QWidget *parent = 0);
+                       bool &encryption, QString &e_method, QString &tarExtraParam, bool &excludeCaches,
+                       bool &oneFilesystem, bool &showTotals, QWidget *parent = 0);
     ~addDialog();
     QString backupProfileName;
     
     void setupSignals();
 private slots:
+    void deleteKeyOnList();
     void on_btn_save_clicked();
 
     void on_btn_addFolders_clicked();

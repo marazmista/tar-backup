@@ -52,6 +52,9 @@ void tar_backup::readProfileSettings()
     this->c_method = pSet.value("compression_method","xz").toString();
     this->e_method = pSet.value("encryption_method","aes-256-cbc").toString();
     this->tarExtraParam = pSet.value("tarExtraParam","").toString();
+    this->excludeCaches = pSet.value("excludeCaches",false).toBool();
+    this->oneFilesystem = pSet.value("oneFilesystem",false).toBool();
+    this->showTotals = pSet.value("showTotals", true).toBool();
 }
 
 void tar_backup::readBackupProfiles()

@@ -51,8 +51,12 @@ private slots:
 
 private:
     Ui::tar_backup *ui;
-    QString c_method,e_method,dest,profileName, tarExtraParam,pass, fullFileName,decryptedFullFileName;
-    bool compress,encrypt, decryptOk, canEncrypt;
+    // var from config //
+    QString c_method,e_method,dest,profileName, tarExtraParam;
+    bool compress,encrypt, excludeCaches, oneFilesystem, showTotals;
+
+    QString pass, fullFileName,decryptedFullFileName;
+    bool decryptOk, canEncrypt;
     qint64 tarArchiveSize,fiSizeNow,fiSizeOld;
     static const ushort tInterval = 1000;
 
@@ -65,6 +69,7 @@ private:
     QString setStatus(QString,bool);
     void setupProcSignals();
     bool checkForRunnungJobs();
+    QString resolveOptionsParams();
 };
 
 #endif // TAR_BACKUP_H

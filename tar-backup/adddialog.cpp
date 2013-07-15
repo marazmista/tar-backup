@@ -12,6 +12,7 @@
 #include <QTextStream>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QShortcut>
 
 addDialog::addDialog(QWidget *parent) :
     QDialog(parent),
@@ -23,7 +24,8 @@ addDialog::addDialog(QWidget *parent) :
 }
 
 addDialog::addDialog(QString &profileName, QString &dest, bool &compression, QString &c_method,
-                     bool &encryption, QString &e_method, QString &tarExtraParam, QWidget *parent) :
+                     bool &encryption, QString &e_method, QString &tarExtraParam, bool &excludeCaches,
+                     bool &oneFilesystem, bool &showTotals, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::addDialog)
 {
@@ -38,6 +40,9 @@ addDialog::addDialog(QString &profileName, QString &dest, bool &compression, QSt
     ui->list_enc->setCurrentIndex(ui->list_enc->findText(e_method));
     ui->t_profileName->setText(profileName);
     ui->t_tarExtraParam->setText(tarExtraParam);
+    ui->cb_excludeCaches->setChecked(excludeCaches);
+    ui->cb_oneFilesystem->setChecked(oneFilesystem);
+    ui->cb_showTotals->setChecked(showTotals);
 
     QFile fList(QApplication::applicationDirPath() + "/" + profileName);
     fList.open(QIODevice::ReadOnly);
@@ -63,6 +68,13 @@ void addDialog::setupSignals()
 {
     connect(ui->cb_compress,SIGNAL(clicked(bool)),ui->list_comp,SLOT(setEnabled(bool)));
     connect(ui->cb_enc,SIGNAL(clicked(bool)),ui->list_enc,SLOT(setEnabled(bool)));
+
+    QShortcut *qs = new QShortcut(Qt::Key_Delete,ui->list_Files);
+    connect(qs,SIGNAL(activated()),this,SLOT(deleteKeyOnList()));
+}
+
+void addDialog::deleteKeyOnList() {
+    ui->btn_remove->click();
 }
 
 void addDialog::loadUiIcons() {
@@ -97,6 +109,9 @@ void addDialog::on_btn_save_clicked()
     pSet.setValue("encryption",ui->cb_enc->isChecked());
     pSet.setValue("encryption_method",ui->list_enc->itemText(ui->list_enc->currentIndex()));
     pSet.setValue("tarExtraParam",ui->t_tarExtraParam->text());
+    pSet.setValue("excludeCaches",ui->cb_excludeCaches->isChecked());
+    pSet.setValue("oneFilesystem",ui->cb_oneFilesystem->isChecked());
+    pSet.setValue("showTotals",ui->cb_showTotals->isChecked());
 
     QFile pFileList(QApplication::applicationDirPath() + "/" + ui->t_profileName->text());
     pFileList.open(QIODevice::WriteOnly);

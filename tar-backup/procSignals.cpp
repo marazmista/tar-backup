@@ -25,6 +25,8 @@ bool tar_backup::checkForRunnungJobs() {
         return true;
     if (QProcess::Running == decryptProc->state())
         return true;
+
+    return false;
 }
 
 void tar_backup::setupProcSignals() {

@@ -10,7 +10,6 @@
 #include <QDir>
 #include <QInputDialog>
 #include <QTimer>
-#include <QTextStream>
 #include <QDate>
 
 QProcess *tarProc = new QProcess();
@@ -58,7 +57,7 @@ void tar_backup::on_btn_modifyProfile_clicked()
         return;
 
     readProfileSettings();
-    addDialog a(profileName,dest,compress,c_method,encrypt,e_method,tarExtraParam);
+    addDialog a(profileName,dest,compress,c_method,encrypt,e_method,tarExtraParam,excludeCaches,oneFilesystem,showTotals);
     a.exec();
 }
 
@@ -105,25 +104,14 @@ void tar_backup::on_btn_run_clicked()
 
     fullFileName = figureOutFileName();
 
-    QFile profileFolderBackupList(QApplication::applicationDirPath() + "/" + this->profileName);
-    profileFolderBackupList.open(QIODevice::ReadOnly);
-    QTextStream ts(&profileFolderBackupList);
-
-    QString tarCmd, targets;
-    while (true) {
-        QString s = ts.readLine();
-        if (s.isEmpty())
-            break;
-        targets.append(" \""+s+"\"");
-    }
-    profileFolderBackupList.close();
+    QString tarCmd, targets = QApplication::applicationDirPath() + "/" + this->profileName;
 
     timer->setInterval(tInterval);
 
     if (compress)
-        tarCmd = "tar --create --" + c_method + " -p -v "+ this->tarExtraParam +" --file \"" + this->dest + fullFileName + "\" " + targets;
+        tarCmd = "tar --create -p -v --" + c_method + " " + resolveOptionsParams() + this->tarExtraParam +" --file \"" + this->dest + fullFileName + "\" -T \"" + targets;
     else
-        tarCmd = "tar --create -p -v --file \"" + this->dest + fullFileName + "\" " + targets;
+        tarCmd = "tar --create -p -v " + resolveOptionsParams() + this->tarExtraParam +"--file \"" + this->dest + fullFileName + "\" -T \"" + targets;
 
     ui->tabWidget->setCurrentIndex(2);
     timer->start();
@@ -145,5 +133,19 @@ QString tar_backup::figureOutFileName()
             return this->profileName + "_" + QDateTime::currentDateTime().toString("dd_MM_yyyy-hh_mm_ss") + ".tar.gz";
     }
     return QString::null;  //avoid compile warrning
+}
+
+QString tar_backup::resolveOptionsParams() {
+    QString params;
+
+    if (this->excludeCaches)
+        params += "--exclude-caches-all ";
+    if (this->oneFilesystem)
+        params += "--one-file-system ";
+    if (this->showTotals)
+        params += "--totals ";
+
+    return params;
+
 }
 
