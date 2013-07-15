@@ -1,6 +1,6 @@
 # tar-backup
 
-GUI app to making backups using tar. Can compress(xz,bzip2,gzip) and encrypt(openssl)
+GUI app to making backups using tar. Can compress(xz,lzma,bzip2,gzip) and encrypt(openssl)
 
 --
 # Screenshots

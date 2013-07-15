@@ -7,20 +7,30 @@
 #include <QProcess>
 #include <QFileInfo>
 #include <QDate>
+#include <QTimer>
+#include <QMessageBox>
 
 extern QProcess *tarProc;
 extern QProcess *encryptProc;
 extern QProcess *tarRestoreProc;
 extern QProcess *decryptProc;
 
+extern QTimer *timer;
+
 void tar_backup::on_btn_abort_clicked()
 {
+    if (!checkForRunnungJobs()) {
+        QMessageBox::information(this,"Info","No jobs to abort",QMessageBox::Ok);
+        return;
+    }
+
     tarProc->kill();
     tarRestoreProc->kill();
     encryptProc->kill();
+    timer->stop();
     ui->label_status->setText(setStatus("Canceled by user.",true));
-    enableButtons(true);
     ui->label_process->clear();
+
 }
 
 void tar_backup::displayTarSize()

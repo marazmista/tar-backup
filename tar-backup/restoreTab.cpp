@@ -61,6 +61,11 @@ void tar_backup::runDecrypt(const QString &file)
 
 void tar_backup::on_btn_runRestore_clicked()
 {
+    if (checkForRunnungJobs()) {
+        QMessageBox::critical(this,"Error", "Other job is currently running", QMessageBox::Ok);
+        return;
+    }
+
     QString fName = ui->t_restoreFile->text();
     QString dest = ui->t_destRestore->text();
 
@@ -82,7 +87,6 @@ void tar_backup::on_btn_runRestore_clicked()
 
     ui->outputT->clear();
     ui->label_status->setText(setStatus("Restoring...",false));
-    enableButtons(false);
     ui->tabWidget->setCurrentIndex(2);
 
     tarRestoreProc->setReadChannelMode(QProcess::MergedChannels);
@@ -106,6 +110,12 @@ void tar_backup::on_btn_listMembers_clicked()
         QMessageBox::critical(this,"Error", "Source archive not set!",QMessageBox::Ok);
         return;
     }
+
+    if (fName.contains(".enc_")) {
+        QMessageBox::information(this,"Info", "Please, decrypt archive first.", QMessageBox::Ok);
+        return;
+    }
+
 
     QString verbose;
     if (ui->cb_listExtendedInfo->isChecked())

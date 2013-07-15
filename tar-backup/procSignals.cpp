@@ -16,6 +16,17 @@ extern QProcess *tarListProc;
 
 extern QTimer *timer;
 
+bool tar_backup::checkForRunnungJobs() {
+    if (QProcess::Running == tarProc->state())
+        return true;
+    if (QProcess::Running == tarRestoreProc->state())
+        return true;
+    if (QProcess::Running == encryptProc->state())
+        return true;
+    if (QProcess::Running == decryptProc->state())
+        return true;
+}
+
 void tar_backup::setupProcSignals() {
     // encrypt process //
     connect(encryptProc,SIGNAL(readyReadStandardOutput()),this, SLOT(encUpdateOutput()));
@@ -44,7 +55,6 @@ void tar_backup::tarRestoreComplete()
 {
     if (tarRestoreProc->exitStatus() == 0) {
         ui->label_status->setText("Done.");
-        enableButtons(true);
     }
 }
 
@@ -64,7 +74,7 @@ void tar_backup::tarComplete()
             encryptProc->start(encryptCmd,QProcess::ReadWrite);
         } else {
             ui->label_status->setText(setStatus("Done.",true));
-            enableButtons(true);
+            timer->stop();
         }
     }
 }
@@ -77,7 +87,6 @@ void tar_backup::encComplete()
         tarDel.close();
 
         ui->label_status->setText(setStatus("Encryption done.",true));
-        enableButtons(true);
         timer->stop();
         ui->label_process->clear();
     }

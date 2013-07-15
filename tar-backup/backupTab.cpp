@@ -69,6 +69,12 @@ void tar_backup::on_btn_run_clicked()
     if (!ui->list_backupProfiles->currentItem() != 0) //check if something is selected
         return;
 
+    if (checkForRunnungJobs()) {
+        QMessageBox::critical(this, "Error", "Other job is currently running",QMessageBox::Ok);
+        return;
+    }
+
+    canEncrypt = false;
     readProfileSettings();
     tarArchiveSize = 0;
     fiSizeNow = fiSizeOld = 0;
@@ -120,7 +126,6 @@ void tar_backup::on_btn_run_clicked()
         tarCmd = "tar --create -p -v --file \"" + this->dest + fullFileName + "\" " + targets;
 
     ui->tabWidget->setCurrentIndex(2);
-    enableButtons(false);
     timer->start();
     tarProc->start(tarCmd,QProcess::ReadWrite);
 }

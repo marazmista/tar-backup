@@ -33,9 +33,9 @@ addDialog::addDialog(QString &profileName, QString &dest, bool &compression, QSt
 
     ui->t_dest->setText(dest);
     ui->cb_compress->setChecked(compression);
-    ui->list_comp->setCurrentText(c_method);
+    ui->list_comp->setCurrentIndex(ui->list_comp->findText(c_method));
     ui->cb_enc->setChecked(encryption);
-    ui->list_enc->setCurrentText(e_method);
+    ui->list_enc->setCurrentIndex(ui->list_enc->findText(e_method));
     ui->t_profileName->setText(profileName);
     ui->t_tarExtraParam->setText(tarExtraParam);
 

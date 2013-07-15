@@ -87,10 +87,3 @@ void tar_backup::saveBackupProfiles()
 }
 
 // manage profiles end //
-
-
-void tar_backup::enableButtons(bool val)
-{
-    ui->btn_run->setEnabled(val);
-    ui->btn_runRestore->setEnabled(val);
-}
