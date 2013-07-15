@@ -87,6 +87,7 @@ void tar_backup::on_btn_runRestore_clicked()
 
     ui->outputT->clear();
     ui->label_status->setText(setStatus("Restoring...",false));
+    ui->label_process->setText(QString::null);
     ui->tabWidget->setCurrentIndex(2);
 
     tarRestoreProc->setReadChannelMode(QProcess::MergedChannels);

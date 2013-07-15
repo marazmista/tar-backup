@@ -56,7 +56,7 @@ void tar_backup::setupProcSignals() {
 void tar_backup::tarRestoreComplete()
 {
     if (tarRestoreProc->exitStatus() == 0) {
-        ui->label_status->setText("Done.");
+        ui->label_status->setText(setStatus("Restore complete.", true));
     }
 }
 
@@ -75,7 +75,7 @@ void tar_backup::tarComplete()
             timer->start();
             encryptProc->start(encryptCmd,QProcess::ReadWrite);
         } else {
-            ui->label_status->setText(setStatus("Done.",true));
+            ui->label_status->setText(setStatus("Backup complete.",true));
             timer->stop();
         }
     }
