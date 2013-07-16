@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QString>
+#include <QListWidget>
 
 namespace Ui {
 class addDialog;
@@ -16,14 +17,17 @@ public:
     explicit addDialog(QWidget *parent = 0);
     explicit addDialog(QString &profileName,QString &dest,bool &compression, QString &c_method,
                        bool &encryption, QString &e_method, QString &tarExtraParam, bool &excludeCaches,
-                       bool &oneFilesystem, bool &showTotals, QWidget *parent = 0);
+                       bool &excludeVcs, bool &excludeBackups, bool &oneFilesystem, bool &showTotals, QWidget *parent = 0);
     ~addDialog();
     QString backupProfileName;
     
     void setupSignals();
+
 private slots:
-    void deleteKeyOnList();
+    void deleteKeyOnSourcesList();
     void on_btn_save_clicked();
+    void deleteKeyOnPatternsList();
+    void refreshPatternsSummary();
 
     void on_btn_addFolders_clicked();
 
@@ -37,9 +41,17 @@ private slots:
 
     void on_btn_tarManpage_clicked();
 
+    void on_btn_addPattern_clicked();
+
+    void on_btn_modifyPattern_clicked();
+
+    void on_btn_removePattern_clicked();
+
 private:
     Ui::addDialog *ui;
     void loadUiIcons();
+    QByteArray listToByteArray(const QListWidget *list);
+    QStringList stringListFromFile(const QString &fPath);
 };
 
 #endif // ADDDIALOG_H

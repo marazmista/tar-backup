@@ -16,7 +16,7 @@ extern QProcess *tarListProc;
 
 extern QTimer *timer;
 
-bool tar_backup::checkForRunnungJobs() {
+bool tar_backup::checkForRunningJobs() {
     if (QProcess::Running == tarProc->state())
         return true;
     if (QProcess::Running == tarRestoreProc->state())
@@ -30,17 +30,15 @@ bool tar_backup::checkForRunnungJobs() {
 }
 
 void tar_backup::setupProcSignals() {
+    connect(timer,SIGNAL(timeout()),this,SLOT(displayProgress()));
+
     // encrypt process //
     connect(encryptProc,SIGNAL(readyReadStandardOutput()),this, SLOT(encUpdateOutput()));
     connect(encryptProc,SIGNAL(finished(int,QProcess::ExitStatus)),this, SLOT(encComplete()));
-    // timer to display ecryption progress //
-    connect(timer,SIGNAL(timeout()),this,SLOT(displayEncTarSize()));
 
     // main tar backup process //
     connect(tarProc,SIGNAL(readyReadStandardOutput()),this,SLOT(tarUpdateOutput()));
     connect(tarProc,SIGNAL(finished(int,QProcess::ExitStatus)), this,SLOT(tarComplete()));
-    // timer to display archive size in status //
-    connect(timer,SIGNAL(timeout()),this,SLOT(displayTarSize()));
 
     // decrypt process //
     connect(decryptProc,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(decryptComplete()));
@@ -66,6 +64,7 @@ void tar_backup::tarComplete()
         if (canEncrypt) {
             timer->stop();
             tarArchiveSize = QFileInfo(this->dest + fullFileName).size();
+            fiSizeNow = fiSizeOld = 0;
 
             ui->label_status->setText(setStatus("Encrypting...",false));
             QString encryptCmd = "openssl "+ e_method + " -salt -pass pass:" + pass +
@@ -90,7 +89,8 @@ void tar_backup::encComplete()
 
         ui->label_status->setText(setStatus("Encryption done.",true));
         timer->stop();
-        ui->label_process->clear();
+        ui->label_process->setText("Backup archive size: " +
+                                   QString::number(QFileInfo(this->dest + fullFileName + ".enc_"+ this->e_method).size() /1000 / 1000) + " MB");
     }
 }
 
@@ -127,7 +127,7 @@ void tar_backup::decryptUpdateOutput()
     if (!s.isEmpty()) {
         ui->outputT->appendPlainText(s);
         if (s.contains("bad decrypt")) {
-            ui->label_status->setText(setStatus("Decrypt filed. (bad password?)",true));
+            ui->label_status->setText(setStatus("Decrypt failed. (bad password?)",true));
             decryptOk = false;
         }
     }

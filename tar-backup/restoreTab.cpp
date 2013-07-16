@@ -61,7 +61,7 @@ void tar_backup::runDecrypt(const QString &file)
 
 void tar_backup::on_btn_runRestore_clicked()
 {
-    if (checkForRunnungJobs()) {
+    if (checkForRunningJobs()) {
         QMessageBox::critical(this,"Error", "Other job is currently running", QMessageBox::Ok);
         return;
     }

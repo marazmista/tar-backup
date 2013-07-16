@@ -25,7 +25,7 @@ void tar_backup::on_btn_addProfile_clicked()
     if (a.result() == 1) {
         ui->list_backupProfiles->addItem(a.backupProfileName);
         saveBackupProfiles();
-    }
+    }  
 }
 
 void tar_backup::on_btn_removeProfile_clicked()
@@ -41,6 +41,11 @@ void tar_backup::on_btn_removeProfile_clicked()
                 ui->list_backupProfiles->currentItem()->text());
         f.remove();
         f.close();
+
+        QFile fPat(QApplication::applicationDirPath() + "/" + ui->list_backupProfiles->currentItem()->text() + "-excludePatterns");
+        fPat.remove();
+        fPat.close();
+
         QFile fini(QApplication::applicationDirPath() + "/" +
                    ui->list_backupProfiles->currentItem()->text()+".ini");
         fini.remove();
@@ -57,8 +62,16 @@ void tar_backup::on_btn_modifyProfile_clicked()
         return;
 
     readProfileSettings();
-    addDialog a(profileName,dest,compress,c_method,encrypt,e_method,tarExtraParam,excludeCaches,oneFilesystem,showTotals);
+    addDialog a(profileName,dest,compress,c_method,encrypt,e_method,tarExtraParam,
+                excludeCaches,excludeVcs,excludeBackups,oneFilesystem,showTotals);
     a.exec();
+
+    if (a.result() == 1) {
+        if (ui->list_backupProfiles->currentItem()->text() != a.backupProfileName) {
+            ui->list_backupProfiles->addItem(a.backupProfileName);
+            saveBackupProfiles();
+        }
+    }
 }
 
 // manage profiles end //
@@ -68,7 +81,7 @@ void tar_backup::on_btn_run_clicked()
     if (!ui->list_backupProfiles->currentItem() != 0) //check if something is selected
         return;
 
-    if (checkForRunnungJobs()) {
+    if (checkForRunningJobs()) {
         QMessageBox::critical(this, "Error", "Other job is currently running",QMessageBox::Ok);
         return;
     }
@@ -109,9 +122,9 @@ void tar_backup::on_btn_run_clicked()
     timer->setInterval(tInterval);
 
     if (compress)
-        tarCmd = "tar --create -p -v --" + c_method + " " + resolveOptionsParams() + this->tarExtraParam +" --file \"" + this->dest + fullFileName + "\" -T \"" + targets;
+        tarCmd = "tar --create -p -v --" + c_method + " " + resolveOptionsParams() + this->excludeParams + this->tarExtraParam +" --file \"" + this->dest + fullFileName + "\" -T \"" + targets;
     else
-        tarCmd = "tar --create -p -v " + resolveOptionsParams() + this->tarExtraParam +"--file \"" + this->dest + fullFileName + "\" -T \"" + targets;
+        tarCmd = "tar --create -p -v " + resolveOptionsParams() + this->excludeParams + this->tarExtraParam +"--file \"" + this->dest + fullFileName + "\" -T \"" + targets;
 
     ui->tabWidget->setCurrentIndex(2);
     timer->start();
@@ -140,6 +153,10 @@ QString tar_backup::resolveOptionsParams() {
 
     if (this->excludeCaches)
         params += "--exclude-caches-all ";
+    if (this->excludeVcs)
+        params += "--exclude-vcs ";
+    if (this->excludeBackups)
+        params += "--exclude-backups ";
     if (this->oneFilesystem)
         params += "--one-file-system ";
     if (this->showTotals)
@@ -148,4 +165,3 @@ QString tar_backup::resolveOptionsParams() {
     return params;
 
 }
-

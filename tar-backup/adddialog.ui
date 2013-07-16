@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>605</width>
+    <width>577</width>
     <height>376</height>
    </rect>
   </property>
@@ -72,8 +72,11 @@
    </item>
    <item row="2" column="0" colspan="3">
     <widget class="QTabWidget" name="tabWidget">
+     <property name="tabShape">
+      <enum>QTabWidget::Rounded</enum>
+     </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="sourcesTab">
       <attribute name="title">
@@ -135,6 +138,76 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="excludeTab">
+      <attribute name="title">
+       <string>Exclude patterns</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="3" column="1">
+        <widget class="QPushButton" name="btn_removePattern">
+         <property name="text">
+          <string>Remove</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="btn_addPattern">
+         <property name="text">
+          <string>Add</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" rowspan="6">
+        <widget class="QListWidget" name="list_patterns"/>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="btn_modifyPattern">
+         <property name="text">
+          <string>Modify</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="2">
+        <widget class="QLineEdit" name="t_patternsSummary">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Minimum</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="settingsTab">
       <attribute name="title">
        <string>Settings</string>
@@ -158,12 +231,6 @@
        </item>
        <item row="2" column="0" rowspan="2">
         <widget class="QFrame" name="frame">
-         <property name="minimumSize">
-          <size>
-           <width>537</width>
-           <height>113</height>
-          </size>
-         </property>
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
@@ -271,11 +338,14 @@
          <widget class="QCheckBox" name="cb_excludeCaches">
           <property name="geometry">
            <rect>
-            <x>10</x>
-            <y>70</y>
+            <x>370</x>
+            <y>10</y>
             <width>121</width>
             <height>19</height>
            </rect>
+          </property>
+          <property name="toolTip">
+           <string>--exclude-caches-all</string>
           </property>
           <property name="text">
            <string>Exclude caches</string>
@@ -284,11 +354,14 @@
          <widget class="QCheckBox" name="cb_oneFilesystem">
           <property name="geometry">
            <rect>
-            <x>10</x>
-            <y>90</y>
+            <x>150</x>
+            <y>70</y>
             <width>121</width>
             <height>19</height>
            </rect>
+          </property>
+          <property name="toolTip">
+           <string>--one-file-system</string>
           </property>
           <property name="text">
            <string>One filesystem</string>
@@ -297,17 +370,52 @@
          <widget class="QCheckBox" name="cb_showTotals">
           <property name="geometry">
            <rect>
-            <x>170</x>
+            <x>10</x>
             <y>70</y>
             <width>131</width>
             <height>19</height>
            </rect>
+          </property>
+          <property name="toolTip">
+           <string>--totals</string>
           </property>
           <property name="text">
            <string>Show totals</string>
           </property>
           <property name="checked">
            <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="cb_excludeVcs">
+          <property name="geometry">
+           <rect>
+            <x>370</x>
+            <y>30</y>
+            <width>131</width>
+            <height>19</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>--exclude-vcs</string>
+          </property>
+          <property name="text">
+           <string>Exclude VCS</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="cb_excludeBackups">
+          <property name="geometry">
+           <rect>
+            <x>370</x>
+            <y>50</y>
+            <width>141</width>
+            <height>19</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>--exclude-backups</string>
+          </property>
+          <property name="text">
+           <string>Exclude backups</string>
           </property>
          </widget>
         </widget>

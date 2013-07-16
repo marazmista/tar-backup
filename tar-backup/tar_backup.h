@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QString>
+#include <QStringList>
 
 namespace Ui {
 class tar_backup;
@@ -16,6 +17,7 @@ public:
     explicit tar_backup(QWidget *parent = 0);
     ~tar_backup();
 
+    QString getSpeed();
 private slots:
     void tarUpdateOutput();
     void tarComplete();
@@ -26,8 +28,7 @@ private slots:
     void decryptComplete();
     void decryptUpdateOutput();
     void tarListProcUpdateOutput();
-    void displayTarSize();
-    void displayEncTarSize();
+    void displayProgress();
 
     void on_btn_addProfile_clicked();
 
@@ -52,8 +53,8 @@ private slots:
 private:
     Ui::tar_backup *ui;
     // var from config //
-    QString c_method,e_method,dest,profileName, tarExtraParam;
-    bool compress,encrypt, excludeCaches, oneFilesystem, showTotals;
+    QString c_method,e_method,dest,profileName, tarExtraParam, excludeParams;
+    bool compress,encrypt, excludeCaches, oneFilesystem, showTotals, excludeVcs, excludeBackups;
 
     QString pass, fullFileName,decryptedFullFileName;
     bool decryptOk, canEncrypt;
@@ -68,8 +69,10 @@ private:
     QString figureOutFileName();
     QString setStatus(QString,bool);
     void setupProcSignals();
-    bool checkForRunnungJobs();
+    bool checkForRunningJobs();
     QString resolveOptionsParams();
+    QString getSpeed(const qint64 &fi1, const qint64 &fi2);
+    QStringList stringListFromFile(const QString &fPath);
 };
 
 #endif // TAR_BACKUP_H

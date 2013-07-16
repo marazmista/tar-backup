@@ -53,25 +53,40 @@ void tar_backup::readProfileSettings()
     this->e_method = pSet.value("encryption_method","aes-256-cbc").toString();
     this->tarExtraParam = pSet.value("tarExtraParam","").toString();
     this->excludeCaches = pSet.value("excludeCaches",false).toBool();
+    this->excludeVcs = pSet.value("excludeVcs", false).toBool();
+    this->excludeBackups = pSet.value("excludeBackups", false).toBool();
     this->oneFilesystem = pSet.value("oneFilesystem",false).toBool();
     this->showTotals = pSet.value("showTotals", true).toBool();
+
+    QStringList excludeList =  stringListFromFile(QApplication::applicationDirPath() + "/" + this->profileName + "-excludePatterns");
+    if (!excludeList.isEmpty()) {
+        excludeParams = "--exclude=";
+        excludeParams += excludeList.join(" --exclude=");
+    }
+
+}
+
+QStringList tar_backup::stringListFromFile(const QString &fPath)
+{
+    QFile fList(fPath);
+    fList.open(QIODevice::ReadOnly);
+    QStringList sl;
+    QTextStream ts(&fList);
+
+    while (true)    {
+        QString s = ts.readLine();
+        if (s.isEmpty())
+            break;
+        sl.append(s);
+    }
+    fList.close();
+
+    return sl;
 }
 
 void tar_backup::readBackupProfiles()
 {
-    QFile bpf(QApplication::applicationDirPath() + "/backupProfiles");
-    bpf.open(QIODevice::ReadOnly);
-    QStringList ls;
-    QTextStream ts(&bpf);
-
-    while (true) {
-        QString s = ts.readLine();
-        if (s.isEmpty())
-            break;
-        ls.append(s);
-    }
-    bpf.close();
-    ui->list_backupProfiles->addItems(ls);
+    ui->list_backupProfiles->addItems(stringListFromFile(QApplication::applicationDirPath() + "/backupProfiles"));
 }
 
 void tar_backup::saveBackupProfiles()
