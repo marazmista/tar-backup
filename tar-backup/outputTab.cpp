@@ -9,6 +9,7 @@
 #include <QDate>
 #include <QTimer>
 #include <QMessageBox>
+#include <QFileDialog>
 
 extern QProcess *tarProc;
 extern QProcess *encryptProc;
@@ -76,4 +77,12 @@ QString tar_backup::setStatus(QString status, bool finishStatus)
         return QDateTime().currentDateTime().toString("hh:mm:ss") + "  |  " + status;
     else
         return "Started at: " + QDateTime().currentDateTime().toString("hh:mm:ss") + " | " + status;
+}
+
+void tar_backup::on_btn_saveOutput_clicked()
+{
+    QFile f(QFileDialog::getSaveFileName(this,"Save file...","",".txt"));
+    f.open(QIODevice::WriteOnly);
+    f.write(ui->outputT->toPlainText().toLatin1());
+    f.close();
 }

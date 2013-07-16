@@ -8,6 +8,7 @@
 #include <QSettings>
 #include <QTextStream>
 #include <QFileDialog>
+#include <QDir>
 
 tar_backup::tar_backup(QWidget *parent) :
     QMainWindow(parent),
@@ -17,6 +18,10 @@ tar_backup::tar_backup(QWidget *parent) :
     readBackupProfiles();
     loadUiIcons();
     setupProcSignals();
+
+    QDir appHomePath(QDir::homePath() + "/.tar-backup");
+    if (!appHomePath.exists())
+        appHomePath.mkdir(QDir::homePath() + "/.tar-backup");
 }
 
 tar_backup::~tar_backup()
@@ -45,7 +50,7 @@ void tar_backup::readProfileSettings()
 {
     this->profileName = ui->list_backupProfiles->currentItem()->text();
 
-    QSettings pSet(QApplication::applicationDirPath() + "/"+ this->profileName+".ini",QSettings::IniFormat);
+    QSettings pSet(QDir::homePath() + "/.tar-backup/"+ this->profileName+".ini",QSettings::IniFormat);
     this->dest = pSet.value("destination").toString();
     this->compress = pSet.value("compression", true).toBool();
     this->encrypt = pSet.value("encryption",false).toBool();
@@ -58,7 +63,7 @@ void tar_backup::readProfileSettings()
     this->oneFilesystem = pSet.value("oneFilesystem",false).toBool();
     this->showTotals = pSet.value("showTotals", true).toBool();
 
-    QStringList excludeList =  stringListFromFile(QApplication::applicationDirPath() + "/" + this->profileName + "-excludePatterns");
+    QStringList excludeList =  stringListFromFile(QDir::homePath() + "/.tar-backup/" + this->profileName + "-excludePatterns");
     if (!excludeList.isEmpty()) {
         excludeParams = "--exclude=";
         excludeParams += excludeList.join(" --exclude=");
@@ -86,12 +91,12 @@ QStringList tar_backup::stringListFromFile(const QString &fPath)
 
 void tar_backup::readBackupProfiles()
 {
-    ui->list_backupProfiles->addItems(stringListFromFile(QApplication::applicationDirPath() + "/backupProfiles"));
+    ui->list_backupProfiles->addItems(stringListFromFile(QDir::homePath() + "/.tar-backup/backupProfiles"));
 }
 
 void tar_backup::saveBackupProfiles()
 {
-    QFile bpf(QApplication::applicationDirPath() + "/backupProfiles");
+    QFile bpf(QDir::homePath() + "/.tar-backup/backupProfiles");
     bpf.open(QIODevice::WriteOnly);
 
     QByteArray tmpArr;

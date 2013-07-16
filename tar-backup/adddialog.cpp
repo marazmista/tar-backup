@@ -65,8 +65,8 @@ addDialog::addDialog(QString &profileName, QString &dest, bool &compression, QSt
     ui->cb_excludeVcs->setChecked(excludeVcs);
     ui->cb_excludeBackups->setChecked(excludeBackups);
 
-    ui->list_Files->addItems(stringListFromFile(QApplication::applicationDirPath() + "/" + profileName));
-    ui->list_patterns->addItems(stringListFromFile(QApplication::applicationDirPath() + "/" + profileName + "-excludePatterns"));
+    ui->list_Files->addItems(stringListFromFile(QDir::homePath() + "/.tar-backup/" + profileName));
+    ui->list_patterns->addItems(stringListFromFile(QDir::homePath() + "/.tar-backup/" + profileName + "-excludePatterns"));
     refreshPatternsSummary();
 }
 
@@ -122,7 +122,7 @@ void addDialog::on_btn_save_clicked()
         return;
     }
 
-    QSettings pSet(QApplication::applicationDirPath()+ "/" + ui->t_profileName->text()+".ini",
+    QSettings pSet(QDir::homePath() + "/.tar-backup/" + ui->t_profileName->text()+".ini",
                    QSettings::IniFormat);
 
     if (ui->t_dest->text()[ui->t_dest->text().length()-1] == '/')
@@ -141,12 +141,12 @@ void addDialog::on_btn_save_clicked()
     pSet.setValue("oneFilesystem",ui->cb_oneFilesystem->isChecked());
     pSet.setValue("showTotals",ui->cb_showTotals->isChecked());
 
-    QFile pFileList(QApplication::applicationDirPath() + "/" + ui->t_profileName->text());
+    QFile pFileList(QDir::homePath() + "/.tar-backup/" + ui->t_profileName->text());
     pFileList.open(QIODevice::WriteOnly);
     pFileList.write(listToByteArray(ui->list_Files));
     pFileList.close();
 
-    QFile pPattersList(QApplication::applicationDirPath() + "/" +ui->t_profileName->text()+"-excludePatterns");
+    QFile pPattersList(QDir::homePath() + "/.tar-backup/" +ui->t_profileName->text()+"-excludePatterns");
     pPattersList.open(QIODevice::WriteOnly);
     pPattersList.write(listToByteArray(ui->list_patterns));
     pPattersList.close();
@@ -196,8 +196,8 @@ void addDialog::on_btn_setDest_clicked()
 
 void addDialog::on_btn_tarManpage_clicked()
 {
-    QFile::copy(":/tarManPage/tar.1.txt",QApplication::applicationDirPath() + "/tarManpage.txt");
-    QDesktopServices::openUrl(QUrl(QApplication::applicationDirPath() + "/tarManpage.txt"));
+    QFile::copy(":/tarManPage/tar.1.txt",QDir::homePath() + "/.tar-backup/tarManpage.txt");
+    QDesktopServices::openUrl(QUrl(QDir::homePath() + "/.tar-backup/tarManpage.txt"));
 }
 
 

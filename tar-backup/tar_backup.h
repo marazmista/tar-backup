@@ -50,6 +50,8 @@ private slots:
 
     void on_btn_saveMembersToFile_clicked();
 
+    void on_btn_saveOutput_clicked();
+
 private:
     Ui::tar_backup *ui;
     // var from config //

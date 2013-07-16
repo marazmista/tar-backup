@@ -37,16 +37,16 @@ void tar_backup::on_btn_removeProfile_clicked()
                               "Queston",
                               "Remove profile " + ui->list_backupProfiles->currentItem()->text() + "?",
                               QMessageBox::Yes,QMessageBox::No)) {
-        QFile f(QApplication::applicationDirPath() + "/" +
+        QFile f(QDir::homePath() + "/.tar-backup/" +
                 ui->list_backupProfiles->currentItem()->text());
         f.remove();
         f.close();
 
-        QFile fPat(QApplication::applicationDirPath() + "/" + ui->list_backupProfiles->currentItem()->text() + "-excludePatterns");
+        QFile fPat(QDir::homePath() + "/.tar-backup/" + ui->list_backupProfiles->currentItem()->text() + "-excludePatterns");
         fPat.remove();
         fPat.close();
 
-        QFile fini(QApplication::applicationDirPath() + "/" +
+        QFile fini(QDir::homePath() + "/.tar-backup/" +
                    ui->list_backupProfiles->currentItem()->text()+".ini");
         fini.remove();
         fini.close();
@@ -117,7 +117,7 @@ void tar_backup::on_btn_run_clicked()
 
     fullFileName = figureOutFileName();
 
-    QString tarCmd, targets = QApplication::applicationDirPath() + "/" + this->profileName;
+    QString tarCmd, targets = QDir::homePath() + "/.tar-backup/" + this->profileName;
 
     timer->setInterval(tInterval);
 
