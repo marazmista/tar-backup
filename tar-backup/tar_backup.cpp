@@ -32,7 +32,6 @@ tar_backup::~tar_backup()
 void tar_backup::loadUiIcons() {
     ui->btn_run->setIcon(QIcon::fromTheme("system-run"));
     ui->btn_addProfile->setIcon(QIcon::fromTheme("list-add"));
-//    ui->btn_modifyProfile->setIcon(QIcon::fromTheme());
     ui->btn_removeProfile->setIcon(QIcon::fromTheme("list-remove"));
     ui->btn_selectFileRestore->setIcon(QIcon::fromTheme("folder"));
     ui->btn_setDestRestore->setIcon(QIcon::fromTheme("folder"));
@@ -40,6 +39,7 @@ void tar_backup::loadUiIcons() {
     ui->btn_runRestore->setIcon(QIcon::fromTheme("system-run"));
     ui->btn_listMembers->setIcon(QIcon::fromTheme("system-run"));
     ui->btn_saveMembersToFile->setIcon(QIcon::fromTheme("document-save"));
+    ui->btn_saveOutput->setIcon(QIcon::fromTheme("document-save"));
 }
 
 
@@ -58,7 +58,7 @@ void tar_backup::readProfileSettings()
     this->e_method = pSet.value("encryption_method","aes-256-cbc").toString();
     this->tarExtraParam = pSet.value("tarExtraParam","").toString();
     this->excludeCaches = pSet.value("excludeCaches",false).toBool();
-    this->excludeVcs = pSet.value("excludeVcs", false).toBool();
+    this->excludeVcs = pSet.value("excludeVCS", false).toBool();
     this->excludeBackups = pSet.value("excludeBackups", false).toBool();
     this->oneFilesystem = pSet.value("oneFilesystem",false).toBool();
     this->showTotals = pSet.value("showTotals", true).toBool();
