@@ -5,7 +5,9 @@ GUI app to making backups using tar. Can compress(xz,lzma,bzip2,gzip) and encryp
 --
 # Screenshots
 
-[Main window](https://docs.google.com/file/d/0B7nxOyrvj2IieWZPd3ppd2phNzQ/edit?usp=sharing)
-[Restore tab](https://docs.google.com/file/d/0B7nxOyrvj2IiNHhwOXpIQUJsV1k/edit?usp=sharing)
-[Add dialog](https://docs.google.com/file/d/0B7nxOyrvj2IiRHdXTkVUeXlHTlk/edit?usp=sharing)
-
+[Main window](https://docs.google.com/file/d/0B7nxOyrvj2IiUl95YTMyNHlmaWs/edit?usp=sharing)
+[Restore tab](https://docs.google.com/file/d/0B7nxOyrvj2IiNTRNN0FhTENHcVE/edit?usp=sharing)
+[Output tab](https://docs.google.com/file/d/0B7nxOyrvj2IiMGhMTEVlOUY0cDQ/edit?usp=sharing)
+[Add dialog](https://docs.google.com/file/d/0B7nxOyrvj2IiVjZDWlQ4SUhYQ1E/edit?usp=sharing)
+[Add dialog 2](https://docs.google.com/file/d/0B7nxOyrvj2IiZXBEbkVCY29vUzA/edit?usp=sharing)
+[Add dialog backup settings](https://docs.google.com/file/d/0B7nxOyrvj2IiYW5YY1B5MkVvNVU/edit?usp=sharing)
