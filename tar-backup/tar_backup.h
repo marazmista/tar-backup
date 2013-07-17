@@ -56,7 +56,7 @@ private:
     Ui::tar_backup *ui;
     // var from config //
     QString c_method,e_method,dest,profileName, tarExtraParam, excludeParams;
-    bool compress,encrypt, excludeCaches, oneFilesystem, showTotals, excludeVcs, excludeBackups;
+    bool compress,encrypt, excludeCaches, oneFilesystem, showTotals, excludeVcs, excludeBackups, preservePermissions;
 
     QString pass, fullFileName,decryptedFullFileName;
     bool decryptOk, canEncrypt;

@@ -62,6 +62,7 @@ void tar_backup::readProfileSettings()
     this->excludeBackups = pSet.value("excludeBackups", false).toBool();
     this->oneFilesystem = pSet.value("oneFilesystem",false).toBool();
     this->showTotals = pSet.value("showTotals", true).toBool();
+    this->preservePermissions = pSet.value("preservePermissions",true).toBool();
 
     QStringList excludeList =  stringListFromFile(QDir::homePath() + "/.tar-backup/" + this->profileName + "-excludePatterns");
     if (!excludeList.isEmpty()) {

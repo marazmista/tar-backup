@@ -17,7 +17,8 @@ public:
     explicit addDialog(QWidget *parent = 0);
     explicit addDialog(QString &profileName,QString &dest,bool &compression, QString &c_method,
                        bool &encryption, QString &e_method, QString &tarExtraParam, bool &excludeCaches,
-                       bool &excludeVcs, bool &excludeBackups, bool &oneFilesystem, bool &showTotals, QWidget *parent = 0);
+                       bool &excludeVcs, bool &excludeBackups, bool &oneFilesystem, bool &showTotals, bool &preservePermissions,
+                       QWidget *parent = 0);
     ~addDialog();
     QString backupProfileName;
     

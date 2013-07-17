@@ -360,7 +360,7 @@
          <widget class="QCheckBox" name="cb_oneFilesystem">
           <property name="geometry">
            <rect>
-            <x>150</x>
+            <x>370</x>
             <y>70</y>
             <width>121</width>
             <height>19</height>
@@ -422,6 +422,25 @@
           </property>
           <property name="text">
            <string>Exclude backups</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="cb_preservePermissions">
+          <property name="geometry">
+           <rect>
+            <x>160</x>
+            <y>70</y>
+            <width>161</width>
+            <height>19</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>--preserve-permissions</string>
+          </property>
+          <property name="text">
+           <string>Preserve permissions</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </widget>

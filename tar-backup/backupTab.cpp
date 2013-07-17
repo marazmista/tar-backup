@@ -63,7 +63,7 @@ void tar_backup::on_btn_modifyProfile_clicked()
 
     readProfileSettings();
     addDialog a(profileName,dest,compress,c_method,encrypt,e_method,tarExtraParam,
-                excludeCaches,excludeVcs,excludeBackups,oneFilesystem,showTotals);
+                excludeCaches,excludeVcs,excludeBackups,oneFilesystem,showTotals,preservePermissions);
     a.exec();
 
     if (a.result() == 1) {
@@ -122,9 +122,9 @@ void tar_backup::on_btn_run_clicked()
     timer->setInterval(tInterval);
 
     if (compress)
-        tarCmd = "tar --create -p -v --" + c_method + " " + resolveOptionsParams() + this->excludeParams + this->tarExtraParam +" --file \"" + this->dest + fullFileName + "\" -T \"" + targets;
+        tarCmd = "tar --create -v --" + c_method + " " + resolveOptionsParams() + this->excludeParams + this->tarExtraParam +" --file \"" + this->dest + fullFileName + "\" -T \"" + targets;
     else
-        tarCmd = "tar --create -p -v " + resolveOptionsParams() + this->excludeParams + this->tarExtraParam +"--file \"" + this->dest + fullFileName + "\" -T \"" + targets;
+        tarCmd = "tar --create -v " + resolveOptionsParams() + this->excludeParams + this->tarExtraParam +"--file \"" + this->dest + fullFileName + "\" -T \"" + targets;
 
     ui->tabWidget->setCurrentIndex(2);
     timer->start();
@@ -161,6 +161,8 @@ QString tar_backup::resolveOptionsParams() {
         params += "--one-file-system ";
     if (this->showTotals)
         params += "--totals ";
+    if (this->preservePermissions)
+        params += "--preserve-permissions ";
 
     return params;
 

@@ -25,6 +25,9 @@ void tar_backup::on_btn_abort_clicked()
         return;
     }
 
+    if (QMessageBox::No == QMessageBox::question(this,"Question","Abort current job?",QMessageBox::Yes,QMessageBox::No))
+        return;
+
     if (tarProc->state() == QProcess::Running)
         tarProc->kill();
     if (tarRestoreProc->state() == QProcess::Running)
