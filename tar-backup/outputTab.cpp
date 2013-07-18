@@ -25,21 +25,40 @@ void tar_backup::on_btn_abort_clicked()
         return;
     }
 
-    if (QMessageBox::No == QMessageBox::question(this,"Question","Abort current job?",QMessageBox::Yes,QMessageBox::No))
+    if (QMessageBox::No == QMessageBox::question(this,"Question","Abort current job and delete incomplete archive?",QMessageBox::Yes,QMessageBox::No))
         return;
 
-    if (tarProc->state() == QProcess::Running)
+    if (tarProc->state() == QProcess::Running) {
         tarProc->kill();
+        removeIncompleteFiles(true, false);
+    }
+    if (encryptProc->state() == QProcess::Running) {
+        encryptProc->kill();
+        removeIncompleteFiles(true, true);
+    }
     if (tarRestoreProc->state() == QProcess::Running)
         tarRestoreProc->kill();
-    if (encryptProc->state() == QProcess::Running)
-        encryptProc->kill();
     if (decryptProc->state() == QProcess::Running)
         decryptProc->kill();
 
     timer->stop();
     ui->label_status->setText(setStatus("Canceled by user.",true));
     ui->label_process->clear();
+}
+
+void tar_backup::removeIncompleteFiles(bool fArch, bool fEncArch) {
+    if (fArch) {
+        QFile f(this->dest + this->fullFileName);
+        if (f.exists())
+            f.remove();
+        f.close();
+    }
+    if (fEncArch) {
+        QFile f(this->dest + this->fullFileName +".enc_" + this->e_method);
+        if (f.exists())
+            f.remove();
+        f.close();
+    }
 }
 
 QString tar_backup::getSpeed(const qint64 &fi1, const qint64 &fi2)

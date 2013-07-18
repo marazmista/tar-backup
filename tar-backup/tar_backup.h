@@ -75,6 +75,7 @@ private:
     QString resolveOptionsParams();
     QString getSpeed(const qint64 &fi1, const qint64 &fi2);
     QStringList stringListFromFile(const QString &fPath);
+    void removeIncompleteFiles(bool, bool);
 };
 
 #endif // TAR_BACKUP_H
