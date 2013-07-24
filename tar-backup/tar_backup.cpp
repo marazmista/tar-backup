@@ -46,9 +46,9 @@ void tar_backup::loadUiIcons() {
 //*****************
 // manage profiles //
 
-void tar_backup::readProfileSettings()
+void tar_backup::readProfileSettings(const QString selectedProfileName)
 {
-    this->profileName = ui->list_backupProfiles->currentItem()->text();
+    this->profileName = selectedProfileName;
 
     QSettings pSet(QDir::homePath() + "/.tar-backup/"+ this->profileName+".ini",QSettings::IniFormat);
     this->dest = pSet.value("destination").toString();

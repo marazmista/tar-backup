@@ -23,7 +23,7 @@ void tar_backup::on_btn_addProfile_clicked()
     a.exec();
 
     if (a.result() == 1) {
-        ui->list_backupProfiles->addItem(a.backupProfileName);
+        ui->list_backupProfiles->addItem(a.backupProfileName + " (Last backup: never)");
         saveBackupProfiles();
     }  
 }
@@ -35,19 +35,19 @@ void tar_backup::on_btn_removeProfile_clicked()
 
     if (QMessageBox::Yes == QMessageBox::question(this,
                               "Queston",
-                              "Remove profile " + ui->list_backupProfiles->currentItem()->text() + "?",
+                              "Remove profile " + figureOutProfileName(ui->list_backupProfiles->currentItem()) + "?",
                               QMessageBox::Yes,QMessageBox::No)) {
         QFile f(QDir::homePath() + "/.tar-backup/" +
-                ui->list_backupProfiles->currentItem()->text());
+                figureOutProfileName(ui->list_backupProfiles->currentItem()));
         f.remove();
         f.close();
 
-        QFile fPat(QDir::homePath() + "/.tar-backup/" + ui->list_backupProfiles->currentItem()->text() + "-excludePatterns");
+        QFile fPat(QDir::homePath() + "/.tar-backup/" + figureOutProfileName(ui->list_backupProfiles->currentItem()) + "-excludePatterns");
         fPat.remove();
         fPat.close();
 
         QFile fini(QDir::homePath() + "/.tar-backup/" +
-                   ui->list_backupProfiles->currentItem()->text()+".ini");
+                   figureOutProfileName(ui->list_backupProfiles->currentItem())+".ini");
         fini.remove();
         fini.close();
 
@@ -61,14 +61,14 @@ void tar_backup::on_btn_modifyProfile_clicked()
     if (!ui->list_backupProfiles->currentItem() != 0) //check if something is selected
         return;
 
-    readProfileSettings();
+    readProfileSettings(figureOutProfileName(ui->list_backupProfiles->currentItem()));
     addDialog a(profileName,dest,compress,c_method,encrypt,e_method,tarExtraParam,
                 excludeCaches,excludeVcs,excludeBackups,oneFilesystem,showTotals,preservePermissions);
     a.exec();
 
     if (a.result() == 1) {
-        if (ui->list_backupProfiles->currentItem()->text() != a.backupProfileName) {
-            ui->list_backupProfiles->addItem(a.backupProfileName);
+        if (figureOutProfileName(ui->list_backupProfiles->currentItem()) != a.backupProfileName) {
+            ui->list_backupProfiles->addItem(a.backupProfileName + " (Last backup: never)");
             saveBackupProfiles();
         }
     }
@@ -87,7 +87,7 @@ void tar_backup::on_btn_run_clicked()
     }
 
     canEncrypt = false;
-    readProfileSettings();
+    readProfileSettings(figureOutProfileName(ui->list_backupProfiles->currentItem()));
     tarArchiveSize = 0;
     fiSizeNow = fiSizeOld = 0;
 
@@ -126,26 +126,41 @@ void tar_backup::on_btn_run_clicked()
     else
         tarCmd = "tar --create -v " + resolveOptionsParams() + this->excludeParams + this->tarExtraParam +"--file \"" + this->dest + fullFileName + "\" -T \"" + targets;
 
+    setLastBackupDate(ui->list_backupProfiles->currentItem());
     ui->tabWidget->setCurrentIndex(2);
     timer->start();
     tarProc->start(tarCmd,QProcess::ReadWrite);
 }
 
-QString tar_backup::figureOutFileName()
-{
+void tar_backup::setLastBackupDate(QListWidgetItem *currentItem) {
+    currentItem->setText(figureOutProfileName(currentItem) + " (Last backup: "+ getDate(false));
+}
+
+QString tar_backup::figureOutFileName() const {
     if (!this->compress)
-        return this->profileName + "_" + QDateTime::currentDateTime().toString("dd_MM_yyyy-hh_mm_ss") + ".tar";
+        return this->profileName + "_" + getDate(true) + ".tar";
     else {
         if (this->c_method == "xz")
-            return this->profileName + "_" + QDateTime::currentDateTime().toString("dd_MM_yyyy-hh_mm_ss") + ".tar.xz";
+            return this->profileName + "_" + getDate(true) + ".tar.xz";
         if (this->c_method == "lzma")
-            return this->profileName + "_" + QDateTime::currentDateTime().toString("dd_MM_yyyy-hh_mm_ss") + ".tar.lzma";
+            return this->profileName + "_" + getDate(true) + ".tar.lzma";
         if (this->c_method == "bzip2")
-            return this->profileName + "_" + QDateTime::currentDateTime().toString("dd_MM_yyyy-hh_mm_ss") + ".tar.bz2";
+            return this->profileName + "_" + getDate(true) + ".tar.bz2";
         if (this->c_method == "gzip")
-            return this->profileName + "_" + QDateTime::currentDateTime().toString("dd_MM_yyyy-hh_mm_ss") + ".tar.gz";
+            return this->profileName + "_" + getDate(true) + ".tar.gz";
     }
     return QString::null;  //avoid compile warrning
+}
+
+QString tar_backup::getDate(const bool forFileName) const {
+    if (forFileName)
+        return QDateTime::currentDateTime().toString("dd_MM_yyyy-hh_mm_ss"); // used in FigureOutFileName()
+    else
+        return QDateTime::currentDateTime().toString("dd.MM.yyyy - hh:mm:ss") + ")"; // used for save last backup date
+}
+
+QString tar_backup::figureOutProfileName(const QListWidgetItem *selectedProfile) const {
+    return selectedProfile->text().split(" (Last backup: ",QString::SkipEmptyParts,Qt::CaseInsensitive)[0];
 }
 
 QString tar_backup::resolveOptionsParams() {

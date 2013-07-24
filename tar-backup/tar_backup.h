@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QString>
 #include <QStringList>
+#include <QListWidgetItem>
 
 namespace Ui {
 class tar_backup;
@@ -31,25 +32,15 @@ private slots:
     void displayProgress();
 
     void on_btn_addProfile_clicked();
-
     void on_btn_removeProfile_clicked();
-
     void on_btn_modifyProfile_clicked();
-
     void on_btn_run_clicked();
-
     void on_btn_abort_clicked();
-
     void on_btn_selectFileRestore_clicked();
-
     void on_btn_setDestRestore_clicked();
-
     void on_btn_runRestore_clicked();
-
     void on_btn_listMembers_clicked();
-
     void on_btn_saveMembersToFile_clicked();
-
     void on_btn_saveOutput_clicked();
 
 private:
@@ -66,16 +57,19 @@ private:
     void loadUiIcons();
     void readBackupProfiles();
     void saveBackupProfiles();
-    void readProfileSettings();
+    void readProfileSettings(const QString);
+    QString figureOutProfileName(const QListWidgetItem *) const;
+    void setLastBackupDate(QListWidgetItem *);
     void runDecrypt(const QString &file);
-    QString figureOutFileName();
-    QString setStatus(QString,bool);
+    QString figureOutFileName() const;
+    QString setStatus(QString,bool) const;
     void setupProcSignals();
-    bool checkForRunningJobs();
+    bool checkForRunningJobs() const;
     QString resolveOptionsParams();
-    QString getSpeed(const qint64 &fi1, const qint64 &fi2);
+    QString getSpeed(const qint64 &fi1, const qint64 &fi2) const;
+    QString getDate(const bool) const;
     QStringList stringListFromFile(const QString &fPath);
-    void removeIncompleteFiles(bool, bool);
+    void removeIncompleteFiles(bool, bool) const;
 };
 
 #endif // TAR_BACKUP_H

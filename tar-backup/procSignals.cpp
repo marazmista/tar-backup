@@ -16,7 +16,7 @@ extern QProcess *tarListProc;
 
 extern QTimer *timer;
 
-bool tar_backup::checkForRunningJobs() {
+bool tar_backup::checkForRunningJobs() const {
     if (QProcess::Running == tarProc->state())
         return true;
     if (QProcess::Running == tarRestoreProc->state())
