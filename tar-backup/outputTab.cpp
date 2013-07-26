@@ -46,7 +46,7 @@ void tar_backup::on_btn_abort_clicked()
     ui->label_process->clear();
 }
 
-void tar_backup::removeIncompleteFiles(bool fArch, bool fEncArch) const {
+void tar_backup::removeIncompleteFiles(const bool fArch, const bool fEncArch) const {
     if (fArch) {
         QFile f(this->dest + this->fullFileName);
         if (f.exists())
@@ -93,7 +93,7 @@ void tar_backup::displayProgress()
     }
 }
 
-QString tar_backup::setStatus(QString status, bool finishStatus) const
+QString tar_backup::setStatus(const QString status, const bool finishStatus) const
 {
     if (finishStatus)
         return QDateTime().currentDateTime().toString("hh:mm:ss") + "  |  " + status;

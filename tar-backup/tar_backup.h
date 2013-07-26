@@ -18,7 +18,6 @@ public:
     explicit tar_backup(QWidget *parent = 0);
     ~tar_backup();
 
-    QString getSpeed();
 private slots:
     void tarUpdateOutput();
     void tarComplete();
@@ -47,7 +46,7 @@ private:
     Ui::tar_backup *ui;
     // var from config //
     QString c_method,e_method,dest,profileName, tarExtraParam, excludeParams;
-    bool compress,encrypt, excludeCaches, oneFilesystem, showTotals, excludeVcs, excludeBackups, preservePermissions;
+    bool compress,encrypt, excludeCaches, oneFilesystem, showTotals, excludeVcs, excludeBackups, preservePermissions, passFromFile;
 
     QString pass, fullFileName,decryptedFullFileName;
     bool decryptOk, canEncrypt;
@@ -62,14 +61,17 @@ private:
     void setLastBackupDate(QListWidgetItem *);
     void runDecrypt(const QString &file);
     QString figureOutFileName() const;
-    QString setStatus(QString,bool) const;
+    QString setStatus(const QString, const bool) const;
     void setupProcSignals();
     bool checkForRunningJobs() const;
     QString resolveOptionsParams();
     QString getSpeed(const qint64 &fi1, const qint64 &fi2) const;
     QString getDate(const bool) const;
     QStringList stringListFromFile(const QString &fPath);
-    void removeIncompleteFiles(bool, bool) const;
+    void removeIncompleteFiles(const bool, const bool) const;
+    void beginEncryptArchive();
+    QString getSpeed();
+    QString askForPassword(const bool);
 };
 
 #endif // TAR_BACKUP_H

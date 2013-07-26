@@ -45,7 +45,7 @@ QStringList addDialog::stringListFromFile(const QString &fPath)
 addDialog::addDialog(QString &profileName, QString &dest, bool &compression, QString &c_method,
                      bool &encryption, QString &e_method, QString &tarExtraParam, bool &excludeCaches,
                      bool &excludeVcs, bool &excludeBackups, bool &oneFilesystem, bool &showTotals, bool &preservePermissions,
-                     QWidget *parent) :
+                     bool &passFromFile, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::addDialog)
 {
@@ -66,6 +66,7 @@ addDialog::addDialog(QString &profileName, QString &dest, bool &compression, QSt
     ui->cb_excludeVcs->setChecked(excludeVcs);
     ui->cb_excludeBackups->setChecked(excludeBackups);
     ui->cb_preservePermissions->setChecked(preservePermissions);
+    ui->cb_passFromFile->setChecked(passFromFile);
 
     ui->list_Files->addItems(stringListFromFile(QDir::homePath() + "/.tar-backup/" + profileName));
     ui->list_patterns->addItems(stringListFromFile(QDir::homePath() + "/.tar-backup/" + profileName + "-excludePatterns"));
@@ -143,6 +144,7 @@ void addDialog::on_btn_save_clicked()
     pSet.setValue("oneFilesystem",ui->cb_oneFilesystem->isChecked());
     pSet.setValue("showTotals",ui->cb_showTotals->isChecked());
     pSet.setValue("preservePermissions",ui->cb_preservePermissions->isChecked());
+    pSet.setValue("passFromFile",ui->cb_passFromFile->isChecked());
 
     QFile pFileList(QDir::homePath() + "/.tar-backup/" + ui->t_profileName->text());
     pFileList.open(QIODevice::WriteOnly);

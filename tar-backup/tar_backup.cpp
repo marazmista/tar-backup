@@ -9,6 +9,7 @@
 #include <QTextStream>
 #include <QFileDialog>
 #include <QDir>
+#include <QInputDialog>
 
 tar_backup::tar_backup(QWidget *parent) :
     QMainWindow(parent),
@@ -26,6 +27,7 @@ tar_backup::tar_backup(QWidget *parent) :
 
 tar_backup::~tar_backup()
 {
+    saveBackupProfiles();
     delete ui;
 }
 
@@ -63,6 +65,7 @@ void tar_backup::readProfileSettings(const QString selectedProfileName)
     this->oneFilesystem = pSet.value("oneFilesystem",false).toBool();
     this->showTotals = pSet.value("showTotals", true).toBool();
     this->preservePermissions = pSet.value("preservePermissions",true).toBool();
+    this->passFromFile = pSet.value("passFromFile",false).toBool();
 
     QStringList excludeList =  stringListFromFile(QDir::homePath() + "/.tar-backup/" + this->profileName + "-excludePatterns");
     if (!excludeList.isEmpty()) {
@@ -111,3 +114,28 @@ void tar_backup::saveBackupProfiles()
 }
 
 // manage profiles end //
+
+QString tar_backup::askForPassword(const bool getPassFromFile) {
+    if (getPassFromFile) {
+        QString passFile;
+        passFile = QFileDialog::getOpenFileName(this,"Select password file","","");
+
+        if (!passFile.isEmpty()) {
+            this->pass = "file:" + passFile;
+            return this->pass;
+        } else
+            return QString::null;
+
+    } else {
+        bool ok;
+        QString inPass = QInputDialog::getText(this,"Password for encryption",
+                                     "Password", QLineEdit::Normal, "", &ok);
+        if (ok && !inPass.isEmpty()) {
+            this->pass = "pass:" + inPass;
+            return this->pass;
+        } else
+            return QString::null;
+    }
+
+    return QString::null;
+}

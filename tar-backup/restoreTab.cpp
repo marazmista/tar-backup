@@ -31,12 +31,11 @@ void tar_backup::on_btn_setDestRestore_clicked()
 
 void tar_backup::runDecrypt(const QString &file)
 {
-    QString pass, d_method, decryptCmd;
-    bool ok;
+    QString password, d_method, decryptCmd;
 
-    pass = QInputDialog::getText(this,"Enter password","Password:", QLineEdit::Normal,"",&ok);
+    password = askForPassword(ui->cb_getPassFromFile->isChecked());
 
-    if (ok && !pass.isEmpty()) {
+    if (!password.isNull()) {
         if (file.contains("_aes-256-cbc"))
             d_method = "aes-256-cbc";
         if (file.contains("_rc4"))
@@ -45,10 +44,12 @@ void tar_backup::runDecrypt(const QString &file)
             d_method = "des";
         if (file.contains("_des3"))
             d_method = "des3";
+        if (file.contains("camellia-256-cbc"))
+            d_method = "camellia-256-cbc";
 
         decryptedFullFileName = ui->t_destRestore->text() + "/" + QFileInfo(file).fileName().remove(".enc_"+d_method);
 
-        decryptCmd = "openssl " + d_method + " -d -pass pass:" + pass + " -in \"" + file +
+        decryptCmd = "openssl " + d_method + " -d -pass " + password + " -in \"" + file +
                 "\" -out \"" + decryptedFullFileName +"\"";
 
         ui->label_status->setText(setStatus("Decrypting...",false));

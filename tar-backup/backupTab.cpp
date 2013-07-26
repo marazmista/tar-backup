@@ -8,7 +8,6 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QDir>
-#include <QInputDialog>
 #include <QTimer>
 #include <QDate>
 
@@ -63,7 +62,7 @@ void tar_backup::on_btn_modifyProfile_clicked()
 
     readProfileSettings(figureOutProfileName(ui->list_backupProfiles->currentItem()));
     addDialog a(profileName,dest,compress,c_method,encrypt,e_method,tarExtraParam,
-                excludeCaches,excludeVcs,excludeBackups,oneFilesystem,showTotals,preservePermissions);
+                excludeCaches,excludeVcs,excludeBackups,oneFilesystem,showTotals,preservePermissions, passFromFile);
     a.exec();
 
     if (a.result() == 1) {
@@ -97,15 +96,9 @@ void tar_backup::on_btn_run_clicked()
     }
 
     if (encrypt) {
-        bool ok;
-        pass = QInputDialog::getText(this,"Password for encryption",
-                                     "Password",
-                                     QLineEdit::Normal,
-                                     "",
-                                     &ok);
-        if (ok && !pass.isEmpty()) {
+        if (!askForPassword(this->passFromFile).isNull())
             canEncrypt = true;
-        } else
+        else
             return;
     }
 
@@ -115,16 +108,16 @@ void tar_backup::on_btn_run_clicked()
     ui->outputT->clear();
     ui->label_process->clear();
 
-    fullFileName = figureOutFileName();
+    this->fullFileName = figureOutFileName();
 
     QString tarCmd, targets = QDir::homePath() + "/.tar-backup/" + this->profileName;
 
     timer->setInterval(tInterval);
 
     if (compress)
-        tarCmd = "tar --create -v --" + c_method + " " + resolveOptionsParams() + this->excludeParams + this->tarExtraParam +" --file \"" + this->dest + fullFileName + "\" -T \"" + targets;
+        tarCmd = "tar --create -v --" + this->c_method + " " + resolveOptionsParams() + this->excludeParams + this->tarExtraParam +" --file \"" + this->dest + this->fullFileName + "\" -T \"" + targets;
     else
-        tarCmd = "tar --create -v " + resolveOptionsParams() + this->excludeParams + this->tarExtraParam +"--file \"" + this->dest + fullFileName + "\" -T \"" + targets;
+        tarCmd = "tar --create -v " + resolveOptionsParams() + this->excludeParams + this->tarExtraParam +"--file \"" + this->dest + this->fullFileName + "\" -T \"" + targets;
 
     setLastBackupDate(ui->list_backupProfiles->currentItem());
     ui->tabWidget->setCurrentIndex(2);
@@ -181,4 +174,19 @@ QString tar_backup::resolveOptionsParams() {
 
     return params;
 
+}
+
+void tar_backup::beginEncryptArchive()
+{
+    timer->stop();
+    tarArchiveSize = QFileInfo(this->dest + this->fullFileName).size();
+    fiSizeNow = fiSizeOld = 0;
+
+    ui->label_status->setText(setStatus("Encrypting...",false));
+    QString encryptCmd = "openssl "+ this->e_method + " -salt -pass " + this->pass +
+            " -in \"" + this->dest + this->fullFileName + "\"" +
+            " -out \"" + this->dest + this->fullFileName + ".enc_"+ this->e_method;
+
+    timer->start();
+    encryptProc->start(encryptCmd,QProcess::ReadWrite);
 }
