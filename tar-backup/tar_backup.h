@@ -54,7 +54,7 @@ private:
 
     QString pass, fullFileName,decryptedFullFileName;
     bool decryptOk, canEncrypt;
-    qint64 tarArchiveSize,fiSizeNow,fiSizeOld;
+    qint64 tarArchiveSize,fiSizeNow,fiSizeOld, encryptedArchiveSize;
     static const ushort tInterval = 1000;
 
     void loadUiIcons();

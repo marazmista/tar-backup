@@ -8,10 +8,13 @@
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QTimer>
 
 QProcess *decryptProc = new QProcess();
 QProcess *tarRestoreProc = new QProcess();
 QProcess *tarListProc = new QProcess();
+
+extern QTimer *timer;
 
 void tar_backup::on_btn_selectFileRestore_clicked()
 {
@@ -47,12 +50,19 @@ void tar_backup::runDecrypt(const QString &file)
         if (file.contains("camellia-256-cbc"))
             d_method = "camellia-256-cbc";
 
-        decryptedFullFileName = ui->t_destRestore->text() + "/" + QFileInfo(file).fileName().remove(".enc_"+d_method);
+        if (ui->cb_decryptOtherDest->isEnabled() && ui->cb_decryptOtherDest->isChecked()) {
+            QString decryptDest = QFileDialog::getExistingDirectory(this,"Select directory to decrypt","",QFileDialog::ShowDirsOnly);
+            if (!decryptDest.isNull())
+                decryptedFullFileName = decryptDest + "/" + QFileInfo(file).fileName().remove(".enc_"+d_method);
+            else
+                return;
+        } else
+            decryptedFullFileName = ui->t_destRestore->text() + "/" + QFileInfo(file).fileName().remove(".enc_"+d_method);
 
         decryptCmd = "openssl " + d_method + " -d -pass " + password + " -in \"" + file +
                 "\" -out \"" + decryptedFullFileName +"\"";
 
-        ui->label_status->setText(setStatus("Decrypting...",false));
+        ui->label_status->setText(setStatus("Decrypting archive ("+ QString::number(encryptedArchiveSize / 1000 / 1000)+ "MB)...",false));
 
         decryptProc->setReadChannelMode(QProcess::MergedChannels);
         decryptProc->start(decryptCmd,QProcess::ReadWrite);
@@ -87,15 +97,17 @@ void tar_backup::on_btn_runRestore_clicked()
     decryptOk = true;
 
     ui->outputT->clear();
-    ui->label_status->setText(setStatus("Restoring...",false));
     ui->label_process->setText(QString::null);
     ui->tabWidget->setCurrentIndex(2);
 
     tarRestoreProc->setReadChannelMode(QProcess::MergedChannels);
 
     if (fName.contains(".enc_")) {
+        encryptedArchiveSize = QFileInfo(fName).size();
+        timer->start();
         runDecrypt(fName);
     } else {
+        ui->label_status->setText(setStatus("Restoring...",false));
         QString restoreCmd = "tar --extract -v -p --file " + fName + " -C "+ dest;
         tarRestoreProc->start(restoreCmd,QProcess::ReadWrite);
     }

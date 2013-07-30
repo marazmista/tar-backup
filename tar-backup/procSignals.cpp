@@ -90,6 +90,7 @@ void tar_backup::decryptComplete()
         if (decryptOk) {
             ui->label_status->setText(setStatus("Decrypt done.",true));
             ui->t_restoreFile->setText(decryptedFullFileName);
+            timer->stop();
             if (!ui->cb_decryptOnly->isChecked())
                 on_btn_runRestore_clicked();
         }

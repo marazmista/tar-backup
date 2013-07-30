@@ -25,7 +25,7 @@ void tar_backup::on_btn_abort_clicked()
         return;
     }
 
-    if (QMessageBox::No == QMessageBox::question(this,"Question","Abort current job and delete incomplete archive?",QMessageBox::Yes,QMessageBox::No))
+    if (QMessageBox::No == QMessageBox::question(this,"Question","Abort current job (also delete incomplete file if backup was aborted)?",QMessageBox::Yes,QMessageBox::No))
         return;
 
     if (tarProc->state() == QProcess::Running) {
@@ -88,6 +88,15 @@ void tar_backup::displayProgress()
         fiSizeNow = fi.size() / 1000;
         ui->label_process->setText("Processed so far: " + QString::number(fi.size() / 1000 / 1000) +
                                    " MB / " + QString::number(tarArchiveSize / 1000 / 1000) + " MB ( " + getSpeed(fiSizeNow,fiSizeOld) + " )");
+        fiSizeOld = fi.size() / 1000;
+        return;
+    }
+
+    if (QProcess::Running == decryptProc->state()) {
+        QFileInfo fi(this->decryptedFullFileName);
+        fiSizeNow = fi.size() / 1000;
+        ui->label_process->setText("Processed so far: " + QString::number(fi.size() / 1000 / 1000) +
+                                   " MB / " + QString::number(encryptedArchiveSize / 1000 / 1000) + " MB ( " + getSpeed(fiSizeNow,fiSizeOld) + " )");
         fiSizeOld = fi.size() / 1000;
         return;
     }

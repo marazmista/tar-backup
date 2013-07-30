@@ -144,10 +144,10 @@ void tar_backup::on_cb_decryptOnly_clicked()
 {
     if (ui->cb_decryptOnly->isChecked()) {
         ui->cb_decryptOtherDest->setEnabled(false);
-        ui->cb_deleteDecryptedArch->setEnabled(false);
+//        ui->cb_deleteDecryptedArch->setEnabled(false);
     } else {
         ui->cb_decryptOtherDest->setEnabled(true);
-        ui->cb_deleteDecryptedArch->setEnabled(true);
+//        ui->cb_deleteDecryptedArch->setEnabled(true);
     }
 }
 

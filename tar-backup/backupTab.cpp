@@ -182,7 +182,7 @@ void tar_backup::beginEncryptArchive()
     tarArchiveSize = QFileInfo(this->dest + this->fullFileName).size();
     fiSizeNow = fiSizeOld = 0;
 
-    ui->label_status->setText(setStatus("Encrypting...",false));
+    ui->label_status->setText(setStatus("Encrypting archive (" + QString::number(tarArchiveSize / 1000 / 1000) + "MB)...",false));
     QString encryptCmd = "openssl "+ this->e_method + " -salt -pass " + this->pass +
             " -in \"" + this->dest + this->fullFileName + "\"" +
             " -out \"" + this->dest + this->fullFileName + ".enc_"+ this->e_method;
