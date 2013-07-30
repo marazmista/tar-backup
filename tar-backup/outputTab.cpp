@@ -93,12 +93,18 @@ void tar_backup::displayProgress()
     }
 }
 
-QString tar_backup::setStatus(const QString status, const bool finishStatus) const
-{
-    if (finishStatus)
-        return QDateTime().currentDateTime().toString("hh:mm:ss") + "  |  " + status;
-    else
-        return "Started at: " + QDateTime().currentDateTime().toString("hh:mm:ss") + " | " + status;
+QString tar_backup::setStatus(const QString status, const bool finishStatus) const  {
+    QString s;
+
+    if (finishStatus) {
+        s = QDateTime().currentDateTime().toString("hh:mm:ss") + "  |  " + status;
+        ui->list_activityLog->addItem(s);
+        return s;
+    } else {
+        s = "Started at: " + QDateTime().currentDateTime().toString("hh:mm:ss") + " | " + status;
+        ui->list_activityLog->addItem(s);
+        return s;
+    }
 }
 
 void tar_backup::on_btn_saveOutput_clicked()

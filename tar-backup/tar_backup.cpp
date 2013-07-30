@@ -139,3 +139,22 @@ QString tar_backup::askForPassword(const bool getPassFromFile) {
 
     return QString::null;
 }
+
+void tar_backup::on_cb_decryptOnly_clicked()
+{
+    if (ui->cb_decryptOnly->isChecked()) {
+        ui->cb_decryptOtherDest->setEnabled(false);
+        ui->cb_deleteDecryptedArch->setEnabled(false);
+    } else {
+        ui->cb_decryptOtherDest->setEnabled(true);
+        ui->cb_deleteDecryptedArch->setEnabled(true);
+    }
+}
+
+void tar_backup::on_btn_showActivityLog_clicked()
+{
+    if (ui->btn_showActivityLog->isChecked())
+        ui->list_activityLog->setHidden(false);
+    else
+        ui->list_activityLog->setHidden(true);
+}

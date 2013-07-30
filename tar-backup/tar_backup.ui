@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>694</width>
-    <height>355</height>
+    <width>682</width>
+    <height>349</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -214,6 +214,9 @@
             <string>Restore backup</string>
            </attribute>
            <layout class="QFormLayout" name="formLayout">
+            <property name="fieldGrowthPolicy">
+             <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+            </property>
             <item row="0" column="0">
              <widget class="QPushButton" name="btn_setDestRestore">
               <property name="minimumSize">
@@ -227,18 +230,49 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QWidget" name="widget" native="true">
+            <item row="1" column="0" colspan="2">
+             <widget class="QLineEdit" name="t_destRestore">
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QPushButton" name="btn_runRestore">
               <property name="minimumSize">
                <size>
-                <width>141</width>
+                <width>191</width>
                 <height>41</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>170</width>
+                <width>191</width>
                 <height>41</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Restore</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QWidget" name="widget" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>350</width>
+                <height>83</height>
                </size>
               </property>
               <widget class="QCheckBox" name="cb_decryptOnly">
@@ -276,7 +310,7 @@
                <property name="geometry">
                 <rect>
                  <x>10</x>
-                 <y>20</y>
+                 <y>60</y>
                  <width>151</width>
                  <height>20</height>
                 </rect>
@@ -288,56 +322,32 @@
                 <string>Password from file</string>
                </property>
               </widget>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <spacer name="verticalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="3" column="0">
-             <widget class="QPushButton" name="btn_runRestore">
-              <property name="minimumSize">
-               <size>
-                <width>191</width>
-                <height>41</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>191</width>
-                <height>41</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>Restore</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" colspan="2">
-             <widget class="QLineEdit" name="t_destRestore">
-              <property name="font">
-               <font>
-                <pointsize>8</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
+              <widget class="QCheckBox" name="cb_deleteDecryptedArch">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>40</y>
+                 <width>251</width>
+                 <height>20</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>Delete decrypted archive after restore</string>
+               </property>
+              </widget>
+              <widget class="QCheckBox" name="cb_decryptOtherDest">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>20</y>
+                 <width>221</width>
+                 <height>20</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>Decrypt to different destination</string>
+               </property>
+              </widget>
              </widget>
             </item>
            </layout>
@@ -428,6 +438,37 @@
         <string>Output</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0" colspan="4">
+         <widget class="QPlainTextEdit" name="outputT">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>7</pointsize>
+           </font>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="plainText">
+           <string>console output</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="4">
+         <widget class="QListWidget" name="list_activityLog">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>7</pointsize>
+           </font>
+          </property>
+         </widget>
+        </item>
         <item row="4" column="0">
          <widget class="QPushButton" name="btn_abort">
           <property name="text">
@@ -448,7 +489,46 @@
           </property>
          </spacer>
         </item>
-        <item row="2" column="0" colspan="2">
+        <item row="4" column="2">
+         <widget class="QPushButton" name="btn_showActivityLog">
+          <property name="text">
+           <string>Show activity log</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="default">
+           <bool>false</bool>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="3">
+         <widget class="QPushButton" name="btn_saveOutput">
+          <property name="minimumSize">
+           <size>
+            <width>170</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Save tar output to file</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="4">
+         <widget class="QLabel" name="label_process">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="4">
          <widget class="QLabel" name="label_status">
           <property name="font">
            <font>
@@ -459,36 +539,6 @@
           </property>
           <property name="text">
            <string>Status</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0" colspan="2">
-         <widget class="QLabel" name="label_process">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="2">
-         <widget class="QPushButton" name="btn_saveOutput">
-          <property name="text">
-           <string>Save to file</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="3">
-         <widget class="QPlainTextEdit" name="outputT">
-          <property name="font">
-           <font>
-            <family>DejaVu Sans</family>
-            <pointsize>7</pointsize>
-           </font>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-          <property name="plainText">
-           <string>console output</string>
           </property>
          </widget>
         </item>
