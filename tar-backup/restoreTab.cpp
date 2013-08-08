@@ -153,3 +153,10 @@ void tar_backup::on_btn_saveMembersToFile_clicked()
     f.close();
 }
 
+void tar_backup::on_btn_abortListMembers_clicked()
+{
+    if (tarListProc->state() == QProcess::Running) {
+        tarListProc->kill();
+    } else
+        QMessageBox::information(this,"error","Nothing to abort.",QMessageBox::Ok);
+}

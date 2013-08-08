@@ -42,6 +42,7 @@ void tar_backup::loadUiIcons() {
     ui->btn_listMembers->setIcon(QIcon::fromTheme("system-run"));
     ui->btn_saveMembersToFile->setIcon(QIcon::fromTheme("document-save"));
     ui->btn_saveOutput->setIcon(QIcon::fromTheme("document-save"));
+    ui->btn_abortListMembers->setIcon(QIcon::fromTheme("process-stop"));
 }
 
 
@@ -144,10 +145,10 @@ void tar_backup::on_cb_decryptOnly_clicked()
 {
     if (ui->cb_decryptOnly->isChecked()) {
         ui->cb_decryptOtherDest->setEnabled(false);
-//        ui->cb_deleteDecryptedArch->setEnabled(false);
+        ui->cb_deleteDecryptedArch->setEnabled(false);
     } else {
         ui->cb_decryptOtherDest->setEnabled(true);
-//        ui->cb_deleteDecryptedArch->setEnabled(true);
+        ui->cb_deleteDecryptedArch->setEnabled(true);
     }
 }
 
@@ -158,3 +159,4 @@ void tar_backup::on_btn_showActivityLog_clicked()
     else
         ui->list_activityLog->setHidden(true);
 }
+

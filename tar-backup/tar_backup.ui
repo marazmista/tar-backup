@@ -172,7 +172,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Select file to restore...</string>
+           <string>Select file...</string>
           </property>
          </widget>
         </item>
@@ -324,7 +324,7 @@
               </widget>
               <widget class="QCheckBox" name="cb_deleteDecryptedArch">
                <property name="enabled">
-                <bool>false</bool>
+                <bool>true</bool>
                </property>
                <property name="geometry">
                 <rect>
@@ -360,31 +360,6 @@
             <string>List members</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_6">
-            <item row="1" column="0" colspan="5">
-             <widget class="QPlainTextEdit" name="tarMembersT">
-              <property name="font">
-               <font>
-                <family>DejaVu Sans Mono</family>
-               </font>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
             <item row="0" column="0">
              <widget class="QPushButton" name="btn_listMembers">
               <property name="minimumSize">
@@ -404,7 +379,34 @@
               </property>
              </widget>
             </item>
+            <item row="0" column="1">
+             <widget class="QPushButton" name="btn_abortListMembers">
+              <property name="text">
+               <string>Abort</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QCheckBox" name="cb_listExtendedInfo">
+              <property name="text">
+               <string>Extended info</string>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="3">
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="4">
              <widget class="QPushButton" name="btn_saveMembersToFile">
               <property name="minimumSize">
                <size>
@@ -423,10 +425,15 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QCheckBox" name="cb_listExtendedInfo">
-              <property name="text">
-               <string>Extended info</string>
+            <item row="1" column="0" colspan="5">
+             <widget class="QPlainTextEdit" name="tarMembersT">
+              <property name="font">
+               <font>
+                <family>DejaVu Sans Mono</family>
+               </font>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>

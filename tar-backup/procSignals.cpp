@@ -53,9 +53,11 @@ void tar_backup::setupProcSignals() {
 
 void tar_backup::tarRestoreComplete()
 {
-    if (tarRestoreProc->exitStatus() == 0) {
+    if (tarRestoreProc->exitStatus() == 0)
         ui->label_status->setText(setStatus("Restore complete.", true));
-    }
+
+    if (!ui->cb_decryptOnly->isChecked() && ui->cb_deleteDecryptedArch->isChecked())
+        QFile(decryptedFullFileName).remove();
 }
 
 void tar_backup::tarComplete()

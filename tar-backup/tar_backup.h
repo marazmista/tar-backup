@@ -41,10 +41,9 @@ private slots:
     void on_btn_listMembers_clicked();
     void on_btn_saveMembersToFile_clicked();
     void on_btn_saveOutput_clicked();
-
     void on_cb_decryptOnly_clicked();
-
     void on_btn_showActivityLog_clicked();
+    void on_btn_abortListMembers_clicked();
 
 private:
     Ui::tar_backup *ui;
