@@ -29,24 +29,17 @@ private slots:
     void on_btn_save_clicked();
     void deleteKeyOnPatternsList();
     void refreshPatternsSummary();
-
     void on_btn_addFolders_clicked();
-
     void on_btn_addFiles_clicked();
-
     void on_btn_cancel_clicked();
-
     void on_btn_remove_clicked();
-
     void on_btn_setDest_clicked();
-
     void on_btn_tarManpage_clicked();
-
     void on_btn_addPattern_clicked();
-
     void on_btn_modifyPattern_clicked();
-
     void on_btn_removePattern_clicked();
+    void on_btn_customPath_clicked();
+    void on_btn_importFromFile_clicked();
 
 private:
     Ui::addDialog *ui;

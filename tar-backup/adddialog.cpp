@@ -197,6 +197,36 @@ void addDialog::on_btn_setDest_clicked()
 }
 
 
+void addDialog::on_btn_customPath_clicked()
+{
+    bool ok;
+    QString customPath = QInputDialog::getText(this,"Add custom path", "Custom path:",QLineEdit::Normal,"",&ok);
+
+    if (ok && !customPath.isEmpty()) {
+        ui->list_Files->addItem(customPath);
+    }
+}
+
+void addDialog::on_btn_importFromFile_clicked()
+{
+    QString fPath = QFileDialog::getOpenFileName(this,"Select file to import","","");
+    if (!fPath.isEmpty()) {
+        QFile fList(fPath);
+        fList.open(QIODevice::ReadOnly);
+        QStringList sl;
+        QTextStream ts(&fList);
+
+        while (true)    {
+            QString s = ts.readLine();
+            if (s.isEmpty())
+                break;
+            sl.append(s);
+        }
+        fList.close();
+        ui->list_Files->addItems(sl);
+    }
+}
+
 // settings tab //
 
 void addDialog::on_btn_tarManpage_clicked()
