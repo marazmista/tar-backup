@@ -147,7 +147,7 @@ QString tar_backup::figureOutFileName() const {
 
 QString tar_backup::getDate(const bool forFileName) const {
     if (forFileName)
-        return QDateTime::currentDateTime().toString("dd_MM_yyyy-hh_mm_ss"); // used in FigureOutFileName()
+        return QDateTime::currentDateTime().toString("yyyy_MM_dd-hh_mm_ss"); // used in FigureOutFileName()
     else
         return QDateTime::currentDateTime().toString("dd.MM.yyyy - hh:mm:ss") + ")"; // used for save last backup date
 }
