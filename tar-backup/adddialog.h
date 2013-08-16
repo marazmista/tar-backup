@@ -43,7 +43,6 @@ private slots:
 
 private:
     Ui::addDialog *ui;
-    void loadUiIcons();
     QByteArray listToByteArray(const QListWidget *list);
     QStringList stringListFromFile(const QString &fPath);
 };

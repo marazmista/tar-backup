@@ -1,5 +1,0 @@
-<RCC>
-  <qresource prefix="tarManPage">
-    <file>tar.1.txt</file>
-  </qresource>
-</RCC>

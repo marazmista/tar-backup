@@ -56,7 +56,6 @@ private:
     qint64 tarArchiveSize,fiSizeNow,fiSizeOld, encryptedArchiveSize;
     static const ushort tInterval = 1000;
 
-    void loadUiIcons();
     void readBackupProfiles();
     void saveBackupProfiles();
     void readProfileSettings(const QString);

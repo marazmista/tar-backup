@@ -20,8 +20,8 @@ addDialog::addDialog(QWidget *parent) :
     ui(new Ui::addDialog)
 {
     ui->setupUi(this);
-    loadUiIcons();
     setupSignals();
+    ui->tabWidget->setCurrentIndex(0);
 }
 
 QStringList addDialog::stringListFromFile(const QString &fPath)
@@ -50,8 +50,8 @@ addDialog::addDialog(QString &profileName, QString &dest, bool &compression, QSt
     ui(new Ui::addDialog)
 {
     ui->setupUi(this);
-    loadUiIcons();
     setupSignals();
+    ui->tabWidget->setCurrentIndex(0);
 
     ui->t_dest->setText(dest);
     ui->cb_compress->setChecked(compression);
@@ -92,14 +92,6 @@ void addDialog::setupSignals()
 
 void addDialog::deleteKeyOnSourcesList() {
     ui->btn_remove->click();
-}
-
-void addDialog::loadUiIcons() {
-    ui->btn_addFolders->setIcon(QIcon::fromTheme("folder"));
-    ui->btn_setDest->setIcon(QIcon::fromTheme("folder"));
-    ui->btn_remove->setIcon(QIcon::fromTheme("list-remove"));
-    ui->btn_save->setIcon(QIcon::fromTheme("document-save"));
-    ui->btn_cancel->setIcon(QIcon::fromTheme("window-close"));
 }
 
 QByteArray addDialog::listToByteArray(const QListWidget *list)
@@ -151,10 +143,10 @@ void addDialog::on_btn_save_clicked()
     pFileList.write(listToByteArray(ui->list_Files));
     pFileList.close();
 
-    QFile pPattersList(QDir::homePath() + "/.tar-backup/" +ui->t_profileName->text()+"-excludePatterns");
-    pPattersList.open(QIODevice::WriteOnly);
-    pPattersList.write(listToByteArray(ui->list_patterns));
-    pPattersList.close();
+    QFile pPatternsList(QDir::homePath() + "/.tar-backup/" +ui->t_profileName->text()+"-excludePatterns");
+    pPatternsList.open(QIODevice::WriteOnly);
+    pPatternsList.write(listToByteArray(ui->list_patterns));
+    pPatternsList.close();
 
     this->backupProfileName = ui->t_profileName->text();
     this->done(1);

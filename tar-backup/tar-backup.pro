@@ -27,4 +27,4 @@ FORMS    += tar_backup.ui \
     adddialog.ui
 
 RESOURCES += \
-    tarManpage.qrc
+    tar-backup-resources.qrc

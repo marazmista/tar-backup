@@ -17,8 +17,9 @@ tar_backup::tar_backup(QWidget *parent) :
 {
     ui->setupUi(this);
     readBackupProfiles();
-    loadUiIcons();
     setupProcSignals();
+    ui->tabWidget->setCurrentIndex(0);
+    ui->tabWidget_2->setCurrentIndex(0);
 
     QDir appHomePath(QDir::homePath() + "/.tar-backup");
     if (!appHomePath.exists())
@@ -30,21 +31,6 @@ tar_backup::~tar_backup()
     saveBackupProfiles();
     delete ui;
 }
-
-void tar_backup::loadUiIcons() {
-    ui->btn_run->setIcon(QIcon::fromTheme("system-run"));
-    ui->btn_addProfile->setIcon(QIcon::fromTheme("list-add"));
-    ui->btn_removeProfile->setIcon(QIcon::fromTheme("list-remove"));
-    ui->btn_selectFileRestore->setIcon(QIcon::fromTheme("folder"));
-    ui->btn_setDestRestore->setIcon(QIcon::fromTheme("folder"));
-    ui->btn_abort->setIcon(QIcon::fromTheme("process-stop"));
-    ui->btn_runRestore->setIcon(QIcon::fromTheme("system-run"));
-    ui->btn_listMembers->setIcon(QIcon::fromTheme("system-run"));
-    ui->btn_saveMembersToFile->setIcon(QIcon::fromTheme("document-save"));
-    ui->btn_saveOutput->setIcon(QIcon::fromTheme("document-save"));
-    ui->btn_abortListMembers->setIcon(QIcon::fromTheme("process-stop"));
-}
-
 
 //*****************
 // manage profiles //
