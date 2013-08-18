@@ -14,5 +14,6 @@
         <file>icons/save.png</file>
         <file>icons/info.png</file>
         <file>icons/folder-add.png</file>
+        <file>icons/tar-backup.png</file>
     </qresource>
 </RCC>

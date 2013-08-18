@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Tar Backup Tool</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="tar-backup-resources.qrc">
+    <normaloff>:/icons/icons/tar-backup.png</normaloff>:/icons/icons/tar-backup.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
