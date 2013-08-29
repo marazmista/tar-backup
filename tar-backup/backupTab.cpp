@@ -104,7 +104,7 @@ void tar_backup::on_btn_run_clicked()
 
     tarProc->setProcessChannelMode(QProcess::MergedChannels);
 
-    ui->label_status->setText(setStatus("Creating backup (" + figureOutProfileName(ui->list_backupProfiles->currentItem()) + ")",false));
+    ui->label_status->setText(setStatus("Creating backup (" + figureOutProfileName(ui->list_backupProfiles->currentItem()) + ")...",false));
     ui->outputT->clear();
     ui->label_process->clear();
 

@@ -40,6 +40,8 @@ private slots:
     void on_btn_removePattern_clicked();
     void on_btn_customPath_clicked();
     void on_btn_importFromFile_clicked();
+    void on_btn_addExcludeFiles_clicked();
+    void on_btn_addExclupdeFolders_clicked();
 
 private:
     Ui::addDialog *ui;

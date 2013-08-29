@@ -266,3 +266,24 @@ void addDialog::refreshPatternsSummary() {
 void addDialog::deleteKeyOnPatternsList() {
     ui->btn_removePattern->click();
 }
+
+void addDialog::on_btn_addExcludeFiles_clicked()
+{
+    QFileDialog fd;
+    fd.setFileMode(QFileDialog::ExistingFiles);
+    if (fd.exec()) {
+        QStringList tmpl;
+        for (int i = 0; i < fd.selectedFiles().count();i++)
+            tmpl.append("\"" + fd.selectedFiles()[i] + "\"");
+        ui->list_patterns->addItems(tmpl);
+        refreshPatternsSummary();
+    }
+}
+
+void addDialog::on_btn_addExclupdeFolders_clicked()
+{
+    QString s = QFileDialog::getExistingDirectory(this,"Add directory", "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    if (!s.isEmpty())
+        ui->list_patterns->addItem("\""+s+"\"");
+    refreshPatternsSummary();
+}
