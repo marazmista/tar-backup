@@ -219,6 +219,14 @@ void addDialog::on_btn_importFromFile_clicked()
     }
 }
 
+void addDialog::on_pushButton_clicked()
+{
+    if (ui->list_Files->currentItem() != 0) {
+        ui->list_Files->currentItem()->setFlags(ui->list_Files->currentItem()->flags() | Qt::ItemIsEditable);
+        ui->list_Files->editItem(ui->list_Files->currentItem());
+    }
+}
+
 // settings tab //
 
 void addDialog::on_btn_tarManpage_clicked()

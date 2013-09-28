@@ -43,6 +43,8 @@ private slots:
     void on_btn_addExcludeFiles_clicked();
     void on_btn_addExclupdeFolders_clicked();
 
+    void on_pushButton_clicked();
+
 private:
     Ui::addDialog *ui;
     QByteArray listToByteArray(const QListWidget *list);
