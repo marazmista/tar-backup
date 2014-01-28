@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QString>
 #include <QStringList>
+#include <QTreeWidgetItem>
 #include <QListWidgetItem>
 
 namespace Ui {
@@ -59,8 +60,7 @@ private:
     void readBackupProfiles();
     void saveBackupProfiles();
     void readProfileSettings(const QString);
-    QString figureOutProfileName(const QListWidgetItem *) const;
-    void setLastBackupDate(QListWidgetItem *);
+    void setLastBackupDate(QTreeWidgetItem *);
     void runDecrypt(const QString &file);
     QString figureOutFileName() const;
     QString setStatus(const QString, const bool) const;

@@ -22,7 +22,7 @@ void tar_backup::on_btn_addProfile_clicked()
     a.exec();
 
     if (a.result() == 1) {
-        ui->list_backupProfiles->addItem(a.backupProfileName + " (Last backup: never)");
+        ui->list_backupProfiles->addTopLevelItem(new QTreeWidgetItem(QStringList() << a.backupProfileName << "never"));
         saveBackupProfiles();
     }  
 }
@@ -34,19 +34,19 @@ void tar_backup::on_btn_removeProfile_clicked()
 
     if (QMessageBox::Yes == QMessageBox::question(this,
                               "Queston",
-                              "Remove profile " + figureOutProfileName(ui->list_backupProfiles->currentItem()) + "?",
+                              "Remove profile " + ui->list_backupProfiles->currentItem()->text(0) + "?",
                               QMessageBox::Yes,QMessageBox::No)) {
         QFile f(QDir::homePath() + "/.tar-backup/" +
-                figureOutProfileName(ui->list_backupProfiles->currentItem()));
+                ui->list_backupProfiles->currentItem()->text(0));
         f.remove();
         f.close();
 
-        QFile fPat(QDir::homePath() + "/.tar-backup/" + figureOutProfileName(ui->list_backupProfiles->currentItem()) + "-excludePatterns");
+        QFile fPat(QDir::homePath() + "/.tar-backup/" + ui->list_backupProfiles->currentItem()->text(0) + "-excludePatterns");
         fPat.remove();
         fPat.close();
 
         QFile fini(QDir::homePath() + "/.tar-backup/" +
-                   figureOutProfileName(ui->list_backupProfiles->currentItem())+".ini");
+                   ui->list_backupProfiles->currentItem()->text(0)+".ini");
         fini.remove();
         fini.close();
 
@@ -60,14 +60,14 @@ void tar_backup::on_btn_modifyProfile_clicked()
     if (!ui->list_backupProfiles->currentItem() != 0) //check if something is selected
         return;
 
-    readProfileSettings(figureOutProfileName(ui->list_backupProfiles->currentItem()));
+    readProfileSettings(ui->list_backupProfiles->currentItem()->text(0));
     addDialog a(profileName,dest,compress,c_method,encrypt,e_method,tarExtraParam,
                 excludeCaches,excludeVcs,excludeBackups,oneFilesystem,showTotals,preservePermissions, passFromFile);
     a.exec();
 
     if (a.result() == 1) {
-        if (figureOutProfileName(ui->list_backupProfiles->currentItem()) != a.backupProfileName) {
-            ui->list_backupProfiles->addItem(a.backupProfileName + " (Last backup: never)");
+        if (ui->list_backupProfiles->currentItem()->text(0) != a.backupProfileName) {
+            ui->list_backupProfiles->addTopLevelItem(new QTreeWidgetItem(QStringList() << a.backupProfileName << "never"));
             saveBackupProfiles();
         }
     }
@@ -86,7 +86,7 @@ void tar_backup::on_btn_run_clicked()
     }
 
     canEncrypt = false;
-    readProfileSettings(figureOutProfileName(ui->list_backupProfiles->currentItem()));
+    readProfileSettings(ui->list_backupProfiles->currentItem()->text(0));
     tarArchiveSize = 0;
     fiSizeNow = fiSizeOld = 0;
 
@@ -104,7 +104,7 @@ void tar_backup::on_btn_run_clicked()
 
     tarProc->setProcessChannelMode(QProcess::MergedChannels);
 
-    ui->label_status->setText(setStatus("Creating backup (" + figureOutProfileName(ui->list_backupProfiles->currentItem()) + ")...",false));
+    ui->label_status->setText(setStatus("Creating backup (" + ui->list_backupProfiles->currentItem()->text(0) + ")...",false));
     ui->outputT->clear();
     ui->label_process->clear();
 
@@ -125,8 +125,8 @@ void tar_backup::on_btn_run_clicked()
     tarProc->start(tarCmd,QProcess::ReadWrite);
 }
 
-void tar_backup::setLastBackupDate(QListWidgetItem *currentItem) {
-    currentItem->setText(figureOutProfileName(currentItem) + " (Last backup: "+ getDate(false));
+void tar_backup::setLastBackupDate(QTreeWidgetItem *currentItem) {
+    currentItem->setText(1,getDate(false));
 }
 
 QString tar_backup::figureOutFileName() const {
@@ -150,10 +150,6 @@ QString tar_backup::getDate(const bool forFileName) const {
         return QDateTime::currentDateTime().toString("yyyy_MM_dd-hh_mm_ss"); // used in FigureOutFileName()
     else
         return QDateTime::currentDateTime().toString("dd.MM.yyyy - hh:mm:ss") + ")"; // used for save last backup date
-}
-
-QString tar_backup::figureOutProfileName(const QListWidgetItem *selectedProfile) const {
-    return selectedProfile->text().split(" (Last backup: ",QString::SkipEmptyParts,Qt::CaseInsensitive)[0];
 }
 
 QString tar_backup::resolveOptionsParams() {

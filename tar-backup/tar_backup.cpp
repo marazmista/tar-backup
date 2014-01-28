@@ -82,7 +82,16 @@ QStringList tar_backup::stringListFromFile(const QString &fPath)
 
 void tar_backup::readBackupProfiles()
 {
-    ui->list_backupProfiles->addItems(stringListFromFile(QDir::homePath() + "/.tar-backup/backupProfiles"));
+    QStringList profiles = stringListFromFile(QDir::homePath() + "/.tar-backup/backupProfiles");
+
+    foreach (QString s, profiles) {
+        if (s.contains("(Last backup:")) { // check if profiles are saved in old way
+            QStringList a = s.split(" (Last backup: ");
+            ui->list_backupProfiles->addTopLevelItem(new QTreeWidgetItem(QStringList() << a[0] << a[1].remove(')')));
+        }
+         else
+            ui->list_backupProfiles->addTopLevelItem(new QTreeWidgetItem(s.split("#|#")));
+    }
 }
 
 void tar_backup::saveBackupProfiles()
@@ -91,9 +100,11 @@ void tar_backup::saveBackupProfiles()
     bpf.open(QIODevice::WriteOnly);
 
     QByteArray tmpArr;
-    for (int i=0;i<ui->list_backupProfiles->count(); i++) {
-        tmpArr.append(QString(ui->list_backupProfiles->item(i)->text()));
-        if (i != ui->list_backupProfiles->count() - 1)  // to avoid empty line at end of file
+
+    for (int i=0;i<ui->list_backupProfiles->topLevelItemCount(); i++) {
+        QTreeWidgetItem *t = ui->list_backupProfiles->topLevelItem(i);
+        tmpArr.append(QString(t->text(0)+"#|#"+t->text(1)));
+        if (i != ui->list_backupProfiles->topLevelItemCount() - 1)  // to avoid empty line at end of file
             tmpArr.append('\n');
     }
     bpf.write(tmpArr);

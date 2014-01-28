@@ -19,6 +19,18 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
+    <property name="leftMargin">
+     <number>5</number>
+    </property>
+    <property name="topMargin">
+     <number>5</number>
+    </property>
+    <property name="rightMargin">
+     <number>5</number>
+    </property>
+    <property name="bottomMargin">
+     <number>5</number>
+    </property>
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="font">
@@ -153,18 +165,40 @@
             </widget>
            </item>
            <item row="0" column="0" rowspan="6">
-            <widget class="QListWidget" name="list_backupProfiles">
+            <widget class="QTreeWidget" name="list_backupProfiles">
              <property name="font">
               <font>
                <pointsize>10</pointsize>
               </font>
              </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
              <property name="alternatingRowColors">
               <bool>true</bool>
              </property>
-             <property name="selectionRectVisible">
-              <bool>true</bool>
+             <property name="indentation">
+              <number>2</number>
              </property>
+             <property name="itemsExpandable">
+              <bool>false</bool>
+             </property>
+             <attribute name="headerDefaultSectionSize">
+              <number>300</number>
+             </attribute>
+             <attribute name="headerMinimumSectionSize">
+              <number>100</number>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Profile</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Last backup</string>
+              </property>
+             </column>
             </widget>
            </item>
           </layout>
